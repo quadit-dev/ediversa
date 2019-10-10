@@ -48,13 +48,15 @@ class export_factura_txt(models.Model):
                 'nadbco_name':invoice.partner_id.name
 
                 })
-        
-        return res 
+
+        return res
 
     datas_fname = fields.Char('File Name', size=256)
     download_file = fields.Boolean('Descargar Archivo')
-    dtm_creacion = fields.Datetime ('Fecha creacion', readonly = False, select = True 
-                                , default = lambda self: fields.datetime.now ())
+    dtm_creacion = fields.Datetime ('Fecha creacion',
+        readonly = False,
+        select = True ,
+        default = lambda self: fields.datetime.now ())
     inv_numdoc = fields.Char('Numero de factura', size=256)
     inv_tipo = fields.Selection([
         ('380', 'Factura comercial'),
@@ -75,7 +77,7 @@ class export_factura_txt(models.Model):
         'Función del mensaje')
 
     user_id = fields.Many2one('account.invoice','user_id')
-    
+
     pai = fields.Selection([
         ('20', 'Cheque'),
         ('42', 'A una cuenta bancaria'),
@@ -100,8 +102,9 @@ class export_factura_txt(models.Model):
         ('AAN', 'Numero de planificacion de entregas')],
         'Referencias', required=True)
     rff_referencia = fields.Char('Referencia del documento')
-    rff_fecha = fields.Datetime ('Fecha referencia', readonly = False, select = True 
-                                , default = lambda self: fields.datetime.now ())
+    rff_fecha = fields.Datetime ('Fecha referencia',
+        readonly = False, select = True,
+        default = lambda self: fields.datetime.now ())
     nadsco = fields.Char('codigo EDI emisor')
     nadsco_name = fields.Char('nombre emisor')
     nadbco = fields.Char('codigo EDI receptor')
@@ -129,11 +132,13 @@ class export_factura_txt(models.Model):
         ('21', 'Varios vencimientos'),
         ('35', 'Pago único')],
         'Condiciones de pago')
-    pat_ven = fields.Datetime ('Fecha de vencimiento', readonly = False, select = True 
-                                , default = lambda self: fields.datetime.now ())
+    pat_ven = fields.Datetime ('Fecha de vencimiento',
+        readonly = False, select = True,
+        default = lambda self: fields.datetime.now ())
     pat_import = fields.Float('Importe del vencimiento')
-    pat_efect = fields.Datetime ('Fecha de efectiva', readonly = False, select = True 
-                                , default = lambda self: fields.datetime.now ())
+    pat_efect = fields.Datetime ('Fecha de efectiva',
+        readonly = False, select = True,
+        default = lambda self: fields.datetime.now ())
     pat_referencia = fields.Selection([
         ('5', 'Después de la fecha factura'),
         ('72', 'Fecha de pago'),
@@ -145,8 +150,10 @@ class export_factura_txt(models.Model):
         ('M', 'Meses')],
         'Tipo de periodo')
     pat_numero = fields.Integer('Numero de días o meses')
-    pat_entrega = fields.Datetime ('Fecha de entrega', readonly = False, select = True 
-                                , default = lambda self: fields.datetime.now ())
+    pat_entrega = fields.Datetime ('Fecha de entrega',
+        readonly = False,
+        select = True,
+        default = lambda self: fields.datetime.now ())
     moares_neto = fields.Integer('Importe neto de la factura')
     moares_bruto = fields.Integer('Importe bruto')
     moares_base = fields.Integer('Base imponible')
@@ -166,15 +173,16 @@ class export_factura_txt(models.Model):
         'Calificador de tipo de impuesto')
     taxres_porcentaje = fields.Integer('Porcentaje del impuesto aplicar')
     taxres_importe = fields.Integer('Suma total de los importes del impuesto')
-    taxres_base = fields.Integer('Importe monetario de la base imponible') 
+    taxres_base = fields.Integer('Importe monetario de la base imponible')
     taxres_total = fields.Integer('Importe del impuesto')
-    taxres_dis = fields.Integer('Disposición nacional que da lugar a la exención del IVA')
+    taxres_dis = fields.Integer(
+        'Disposición nacional que da lugar a la exención del IVA')
     taxres_categoria = fields.Selection([
         ('E', 'Exento de impuestos'),
         ('ES1', 'Se aplica el régimen especial del criterio de caja')],
         'Categoría del impuesto')
 
-    
+
     file = fields.Binary('Layout')
     download_file = fields.Boolean('Descargar Archivo')
     cadena_decoding = fields.Text('Binario sin encoding')
@@ -204,17 +212,17 @@ class export_factura_txt(models.Model):
         split_creacion = self.pat_ven.split('-')
         split_creacion_dia = split_creacion[2].split(' ')
         date_pat_ven = split_creacion[0]+split_creacion[1]+split_creacion_dia[0]
-        
+
         #split de fecha pat_efec,
         split_creacion = self.pat_efect.split('-')
         split_creacion_dia = split_creacion[2].split(' ')
         date_pat_ref = split_creacion[0]+split_creacion[1]+split_creacion_dia[0]
-        
+
         #split de fecha pat_ent,
         split_creacion = self.pat_entrega.split('-')
         split_creacion_dia = split_creacion[2].split(' ')
         date_pat_ent = split_creacion[0]+split_creacion[1]+split_creacion_dia[0]
-        
+
         sl = "\n"
 
         document_txt = document_txt+"invoic_d_93a_un_ean007"
@@ -229,10 +237,10 @@ class export_factura_txt(models.Model):
             campo_pai = "%s|%s" % (
                 "PAI", self.pai)
             document_txt = document_txt+ sl + campo_pai
-        
+
         if self.ali:
             campo_ali = "%s|%s" % (
-                "ALI", self.ali) 
+                "ALI", self.ali)
             document_txt = document_txt+ sl + campo_ali
 
         campo_rff = "%s|%s|%s|%s" % (
@@ -254,10 +262,13 @@ class export_factura_txt(models.Model):
                 "CUX", self.cux_coin,self.cux_cali)
 
         document_txt = document_txt+ sl + campo_cux
-        
+
         if self.pat_cali:
             campo_pat = "%s|%s|%s|%s|%s|%s|%s|%s|%s" % (
-                "PAT", self.pat_cali,date_pat_ven,self.pat_import,date_pat_ref,self.pat_referencia,self.pat_periodo,self.pat_numero,date_pat_ent)
+                "PAT", self.pat_cali,date_pat_ven,
+                self.pat_import,date_pat_ref,
+                self.pat_referencia,
+                self.pat_periodo,self.pat_numero,date_pat_ent)
             document_txt = document_txt+ sl + campo_pat
 
         # =>Fin Cabecera
@@ -277,10 +288,11 @@ class export_factura_txt(models.Model):
         file_name = 'desdav.txt'
         date = datetime.now().strftime('%d-%m-%Y')
         datas_fname = "Factura "+str(date)+".txt"  # Nombre del Archivo
-        
 
-        #abrimos el archivo txt especificando en que ruta de la maquina se guardara
-        
+
+        #abrimos el archivo txt especificando en que ruta de la maquina
+        # se guardara
+
         with open('/tmp/'+file_name, 'w+') as f:
             #le asiganamos que informacion guardara
             f.write(document_txt)

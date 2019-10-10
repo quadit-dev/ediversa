@@ -22,7 +22,8 @@ class product_exi(models.Model):
     _name = 'sale.order'
     _inherit = ['sale.order']
 
-    product_exist = fields.Text(string='Default Terms and Conditions', translate=True)
+    product_exist = fields.Text(string='Default Terms and Conditions',
+        translate=True)
 
 
 class ediversaOrder(models.Model):
@@ -94,7 +95,7 @@ class ediversaOrder(models.Model):
                             False
 
                         if vals["ord_tipo_doc"] == '226':
-                            _logger.info("pedido parcial que cancela un pedido abierto ")
+                            _logger.info("pedido parcial que cancela un pedido abierto ")  # noqa
                         else:
                             False
 
@@ -396,7 +397,7 @@ class ediversaOrder(models.Model):
                             'nadud_provincia': item[8] if len(item) >= 9 else False,
                         })
 
-                    
+
 
                     if item[0] == 'TAX':
                         if not len(item) == 1:
@@ -964,7 +965,7 @@ class ediversaOrder(models.Model):
                                 'qtylin_especificador_unidad': item[3] if len(item) >= 4 else False,
                             }]
                             qtylin.append(xline)
-                       
+
 
                     vals.update({'qtylin_row': qtylin})
                     # print("#############################p",p)
@@ -1343,7 +1344,7 @@ class ediversaOrder(models.Model):
 
 
 
-       
+
         if vals.has_key('nadms_row'):
             for nadsu in vals['nadms_row']:
                 # print("#################nadsu",nadsu)

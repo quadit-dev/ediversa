@@ -25,7 +25,7 @@ sys.setdefaultencoding('utf8')
 class StockMove(models.Model):
     _inherit = 'stock.move'
     id_bultos = fields.Char('', readonly = False)
-   
+
 
 
 class StockPackOperation(models.Model):
@@ -51,15 +51,17 @@ class StockPicking(models.Model):
                 if not pick.move_lines and not pick.pack_operation_ids:
                     raise UserError(_('Please create some Initial Demand or Mark as Todo and create some Operations. '))
                 # In draft or with no pack operations edited yet, ask if we can just do everything
-                if pick.state == 'draft' or all([x.qty_done == 0.0 for x in pick.pack_operation_ids]):
+                if pick.state == 'draft' or all([x.qty_done == 0.0 for x in pick.pack_operation_ids]):  # noqa
                     # If no lots when needed, raise error
                     picking_type = pick.picking_type_id
-                    if (picking_type.use_create_lots or picking_type.use_existing_lots):
+                    if (picking_type.use_create_lots or picking_type.use_existing_lots):  # noqa
                         for pack in pick.pack_operation_ids:
-                            if pack.product_id and pack.product_id.tracking != 'none':
-                                raise UserError(_('Some products require lots, so you need to specify those first!'))
-                    view = data_obj.xmlid_to_res_id(cr, uid, 'stock.view_immediate_transfer')
-                    wiz_id = self.pool['stock.immediate.transfer'].create(cr, uid, {'pick_id': pick.id}, context=context)
+                            if pack.product_id and pack.product_id.tracking != 'none':  # noqa
+                                raise UserError(_('Some products require lots, so you need to specify those first!'))  # noqa
+                    view = data_obj.xmlid_to_res_id(cr, uid,
+                        'stock.view_immediate_transfer')
+                    wiz_id = self.pool['stock.immediate.transfer'].create(cr,
+                        uid, {'pick_id': pick.id}, context=context)
                     return {
                          'name': _('Immediate Transfer?'),
                          'type': 'ir.actions.act_window',
@@ -75,8 +77,10 @@ class StockPicking(models.Model):
 
                 # Check backorder should check for other barcodes
                 if self.check_backorder(cr, uid, pick, context=context):
-                    view = data_obj.xmlid_to_res_id(cr, uid, 'stock.view_backorder_confirmation')
-                    wiz_id = self.pool['stock.backorder.confirmation'].create(cr, uid, {'pick_id': pick.id}, context=context)
+                    view = data_obj.xmlid_to_res_id(cr, uid,
+                        'stock.view_backorder_confirmation')
+                    wiz_id = self.pool['stock.backorder.confirmation'].create(
+                        cr, uid, {'pick_id': pick.id}, context=context)
                     return {
                              'name': _('Create Backorder?'),
                              'type': 'ir.actions.act_window',
@@ -93,7 +97,9 @@ class StockPicking(models.Model):
                     if operation.qty_done < 0:
                         raise UserError(_('No negative quantities allowed'))
                     if operation.qty_done > 0:
-                        pack_op_obj.write(cr, uid, operation.id, {'product_qty': operation.qty_done}, context=context)
+                        pack_op_obj.write(cr, uid, operation.id, {
+                            'product_qty': operation.qty_done},
+                            context=context)
                     else:
                         to_delete.append(operation.id)
                 if to_delete:
@@ -113,6 +119,8 @@ class res_partner(models.Model):
 class export_albaran_txt(models.Model):
     _name = 'export.albaran.txt'
     _description = 'Exportar Albaran'
+
+
 
 
 
@@ -138,10 +146,6 @@ class export_albaran_txt(models.Model):
                     code_ddp = child.code_naddp
                 if child.code_nadby:
                     code_dby = child.code_nadby
-            #print "########### ORDER REFERENCE >>>>>>>>>>>>>>> ", picking.number_of_packages
-            #print("CODIGO-------------------------------",picking.company_id.partner_id.codigo_provedor)
-            #print("CODIGO2-------------------------------",child.code_naddp)
-            #print("CODIGO3-------------------------------",child.code_nadby)
             res.update({
                 'bgm_num_doc':picking.name,
                 'naddp_cod_entrega': code_ddp,
@@ -149,13 +153,12 @@ class export_albaran_txt(models.Model):
                 'dtm_entrega':picking.min_date,
                 'rff_referencia':picking.order_reference,
                 'rff_fecha':picking.sale_id.date_order,
-                'nadms_cod_emisor_mens':picking.company_id.partner_id.codigo_provedor,
+                'nadms_cod_emisor_mens':picking.company_id.partner_id.codigo_provedor,  # noqa
                 'nadmr_cod_emisor_mens':picking.partner_id.codigo_provedor,
-                'nadsu_cod_prove':picking.company_id.partner_id.codigo_provedor,
+                'nadsu_cod_prove':picking.company_id.partner_id.codigo_provedor,  # noqa
                 'pac_num_embalajes':picking.number_of_packages,
                 'cntres_lines':cont_cntres
                 })
-        print("######################################res1", res)
         return res
 
 
@@ -173,8 +176,8 @@ class export_albaran_txt(models.Model):
         ('1', 'Cancelacion')],
         "Funcion del Mensaje", required=True, default="9")
     #dtm_entrega = fields.Char('Fecha entrega')
-    dtm_creacion = fields.Datetime ('Fecha creacion', readonly = False, select = True 
-                                , default = lambda self: fields.datetime.now ())
+    dtm_creacion = fields.Datetime ('Fecha creacion', readonly = False,
+        select = True, default = lambda self: fields.datetime.now ())
     ali_info = fields.Selection([
         ('X6', 'Si especificar la matrícula'),
         ('X7', 'No se va a especificar la matrícula'),
@@ -262,7 +265,7 @@ class export_albaran_txt(models.Model):
 
     qtylin_cali_cant = fields.Selection([
         ('12', 'Cantidad enviada (no incluye la mercancía sin cargo)'),
-        ('21', 'Cantidad solicitada por el comprador (no incluye la mercancía sin cargo)'),
+        ('21', 'Cantidad solicitada por el comprador (no incluye la mercancía sin cargo)'),  # noqa
         ('59', 'Unidades de consumo contenidas en esta unidad de embalaje'),
         ('192', 'Cantidad de mercancía sin cargo'),
         ('45E', 'Cantidad de unidades en agrupación superior')],
@@ -288,21 +291,20 @@ class export_albaran_txt(models.Model):
         #split de fecha creacion
         split_creacion = self.dtm_creacion.split('-')
         split_creacion_dia = split_creacion[2].split(' ')
-        date_creacion = split_creacion[0]+split_creacion[1]+split_creacion_dia[0]
+        date_creacion = split_creacion[0]+split_creacion[1]+split_creacion_dia[0]  # noqa
 
-        #split fecha de entrega 
-        split_entrega = self.env['stock.picking'].browse(picking_ids).min_date.split('-')
+        #split fecha de entrega
+        split_entrega = self.env['stock.picking'].browse(picking_ids).min_date.split('-')  # noqa
         split_entrega_dia = split_entrega[2].split(' ')
         date_entrega = split_entrega[0]+ split_entrega[1]+ split_entrega_dia[0]
 
         #split de referencia
-        print ("------------______--------",self.env['stock.picking'].browse(picking_ids).sale_id.date_order)
         """La operacion del split es correcta
         solo que en la orden debe de efectuarse de manera correcta si no
         mostrara error"""
-        split_referencia  = self.env['stock.picking'].browse(picking_ids).sale_id.date_order.split('-')
+        split_referencia  = self.env['stock.picking'].browse(picking_ids).sale_id.date_order.split('-')  # noqa
         split_referencia_dia = split_referencia[2].split(' ')
-        date_referencia = split_referencia[0]+ split_referencia[1]+ split_referencia_dia[0]
+        date_referencia = split_referencia[0]+ split_referencia[1]+ split_referencia_dia[0]  # noqa
         date = datetime.now().strftime('%d-%m-%Y')
         datas_fname = "Albaran "+str(date)+".txt"  # Nombre del Archivo
         sl = "\n"
@@ -343,7 +345,7 @@ class export_albaran_txt(models.Model):
         cont_2 = 0
         cont_1_pac = 1
         cont_2_pac = 0
-        contador_cntres = 0 
+        contador_cntres = 0
         contador_bulto = 0
 
         for move in self.env['stock.picking'].browse(
@@ -377,7 +379,7 @@ class export_albaran_txt(models.Model):
                 cont_1 = cont_1+1
                 cont_2 = cont_2+1
                 contador_bulto= move.id_bultos
-            
+
             campo_lin = "%s|%s|%s" % (
                 "LIN", move.product_id.barcode, self.lin_tipo_cod)
             campo_pialin = "%s|%s|%s" % (
@@ -389,34 +391,42 @@ class export_albaran_txt(models.Model):
             campo_qtylin = "%s|%s|%s" % (
                 "QTYLIN", self.qtylin_cali_cant, int(move.qty_done))
             if contador_bulto == 1:
-                body += campo_pci + sl + campo_lin + sl + campo_pialin + sl + campo_imdlin + \
-                    sl + campo_qtylin + sl
+                body += campo_pci + sl + campo_lin + sl + \
+                    campo_pialin + sl + \
+                    campo_imdlin + sl + campo_qtylin + sl
             else:
                 if campo_cps:
-                    body += campo_cps + sl + campo_pac + sl + campo_pci + sl + campo_lin + sl + campo_pialin + sl + campo_imdlin + \
-                        sl + campo_qtylin + sl
+                    body += campo_cps + sl + campo_pac + sl + campo_pci + \
+                        sl + campo_lin + sl + campo_pialin + sl + \
+                        campo_imdlin + sl + campo_qtylin + sl
                 else:
-                    body += campo_lin + sl + campo_pialin + sl + campo_imdlin + \
-                        sl + campo_qtylin + sl
+                    body += campo_lin + sl + campo_pialin + sl + \
+                        campo_imdlin + sl + campo_qtylin + sl
         print("############################################body", body)
         campo_cntres = "%s|%s" % (
                     "CNTRES", str(contador_cntres))
-        
+
         ##Moficando como llena la opcion ALI en el documento TXT
         if self.ali_info:
-            document_txt = document_txt+"desadv_d_96a_un_ean005" + sl + campo_bgm + sl + campo_dtm + sl + campo_ali + sl + campo_rff + sl + campo_nadms + sl + campo_nadmr + sl + campo_nadsu + \
-                sl + campo_nadby + sl + campo_naddp + sl + cabecera  + sl + body + campo_cntres+ sl
+            document_txt = document_txt+"desadv_d_96a_un_ean005" + sl + \
+                campo_bgm + sl + campo_dtm + sl + campo_ali + sl + \
+                campo_rff + sl + campo_nadms + sl + campo_nadmr + sl + \
+                campo_nadsu + sl + campo_nadby + sl + campo_naddp + sl + \
+                cabecera  + sl + body + campo_cntres+ sl
         else:
-            document_txt = document_txt+"desadv_d_96a_un_ean005" + sl + campo_bgm + sl + campo_dtm + sl + campo_rff + sl + campo_nadms + sl + campo_nadmr + sl + campo_nadsu + \
-            sl + campo_nadby + sl + campo_naddp + sl + cabecera  + sl + body + campo_cntres+ sl
- 
-        print("##########################################document_txt", document_txt)
+            document_txt = document_txt+"desadv_d_96a_un_ean005" + sl + \
+            campo_bgm + sl + campo_dtm + sl + campo_rff + sl + campo_nadms + \
+            sl + campo_nadmr + sl + campo_nadsu + sl + campo_nadby + sl + \
+            campo_naddp + sl + cabecera  + sl + body + campo_cntres+ sl
+
+        print("#########document_txt", document_txt)
 
         # =>Fin cuerpo
         # time.sleep(10)
         #creamos el archivo txt
         file_name = 'desdav.txt'
-        #abrimos el archivo txt especificando en que ruta de la maquina se guardara
+        #abrimos el archivo txt especificando en
+        #que ruta de la maquina se guardara
         with open('/tmp/'+file_name, 'w+') as f:
             #le asiganamos que informacion guardara
             f.write(document_txt)
