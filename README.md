@@ -10,6 +10,15 @@ This modules was written to extend the functionality of Odoo.
 Maintainer
 ----------
 
+Credits
+=======
+
+Contributors
+------------
+
+* Angel Alvarez <angel.alvarez@quadit.mx> (https://www.quadit.mx)
+
+
 [![Quadit](https://pbs.twimg.com/profile_images/942255530021609472/tB1otoX7_400x400.jpg)](https://www.quadit.mx)
 
 This modules are maintained by Quadit.
