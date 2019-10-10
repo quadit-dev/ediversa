@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+<data>
+
+<!--======FORM VIEW ======-->
+    <record id="export_factura" model="ir.ui.view">
+        <field name="name">export.factura.txt.form</field>
+        <field name="model">export.factura.txt</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="factura" >
+               <header>
+                    <field name="datas_fname" invisible="1" />
+                    <field name="download_file" invisible="1" />
+                </header>
+                <sheet>
+                	 <separator colspan="4" string="Generar documento de texto plano"/>
+                	<group col="2">
+                		
+                		<field name="inv_numdoc" required="1" readonly="1"/>
+                		<field name="inv_tipo" required="1"/>
+                		<field name="inv_funcion" required="1"/>
+                		<field name = "dtm_creacion" />
+                		<field name = "pai" />
+                		<field name = "ali" />
+                		<field name="rff_cali" required="1"/>
+                		<field name="rff_referencia" required="1"/>
+                		<field name="rff_fecha" required="1"/>
+                       	<field name="nadsco" required="1" readonly="1"/>
+                       	<field name="nadbco" required="1" readonly="1"/>
+                       	<field name="nadsu_cod_prove" required="1" />
+                       	<field name="nadby_cod_cliente" required="1" />
+                       	<field name="nadiv" required="1" />
+                       	<field name="nadms" />
+                       	<field name="nadmr" />
+                       	<field name="naddp" required="1" />
+                       	<field name="nadpr" /> 
+                       	<field name="nadpe" />
+                       	<field name="cux_coin" required="1" />
+                       	<field name="cux_cali" required="1" />
+                       	
+                       	<p>PAT</p>
+                       	<p></p>
+                       	<field name="pat_cali" />
+                       	<field name="pat_ven" />
+                       	<field name="pat_import" />
+                       	<field name="pat_efect" />
+                       	<field name="pat_referencia" />
+                       	<field name="pat_periodo" />
+                       	<field name="pat_numero" />
+                       	<field name="pat_entrega" />
+                       	<p>Seccion de Resumen</p>
+                       	<p></p>
+                       	<field name="moares_neto" required="1" />
+                       	<field name="moares_bruto" required="1" />
+                       	<field name="moares_base" required="1" />
+                       	<field name="moares_total" required="1" />
+                       	<field name="moares_impuestos" required="1" />
+                       	<field name="moares_descuentos" required="1" />
+                       	<field name="moares_cargos" required="1" />
+                       	<field name="moares_debido" required="1" />
+                       	<p>Impuestos totales</p>
+                       	<p></p>
+                       	<field name="taxres_tipo" required="1" />
+                       	<field name="taxres_porcentaje" required="1" />
+                       	<field name="taxres_importe" required="1" />
+                       	<field name="taxres_base" required="1" />
+                       	<field name="taxres_total" required="1" />
+                       	<field name="taxres_dis" required="1" />
+                       	<field name="taxres_categoria" required="1" />
+
+                	</group>
+                </sheet>
+                 <sheet attrs="{'invisible':[('download_file','=',False)]}">
+                    <div >
+                        <h2>Generacion Completa</h2>
+                        <p>Descarga el Documento: <field name="file" readonly="1" filename="datas_fname"/></p>
+                        <p> Documento Generado (TXT - .txt) y Codificado<strong>Unicode/UTF-8</strong></p>
+                    </div>
+                </sheet>
+                <footer attrs="{'invisible':[('download_file','=',False)]}">
+                    <center>
+
+                        <button string="Cerrar" special="cancel"  icon="gtk-cancel" class="oe_highlight"/>
+                    </center>
+                </footer>
+                 <footer attrs="{'invisible':[('download_file','=',True)]}">
+                    <center>
+
+                        <button name="export_txt_file" string="Generar" type="object"  icon="gtk-execute"/>
+                        
+                        <button string="Cancelar" class="oe_link" special="cancel" icon="gtk-cancel"/>
+                    </center>
+                </footer>
+            </form>
+            </field>
+        </record>
+
+
+    <!--=================ACCION ASISTENTE==================-->
+    <act_window
+        name="Enviar factura EDIversa"
+        res_model="export.factura.txt"
+        src_model="account.invoice"
+        view_mode="form" target="new"
+        key2="client_action_multi"
+        id="action_export_factura"/>
+
+
+
+</data>
+</openerp>

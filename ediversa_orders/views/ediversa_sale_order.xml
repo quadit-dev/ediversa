@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sale_date">
+            <field name="name">sale.date.form</field>
+            <field name="model">sale.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <field name="date_order" position="replace">
+                    <field name="date_order" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_res_partner_form_inherit" model="ir.ui.view">
+            <field name="name">DRS Company Custom Fields</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="website" position="after">
+                    <group >
+                        <field name="codigo_provedor"/>
+                        <!-- <field name="codigo_dir_fact"/>
+                        <field name="codigo_dir_entrega"/> -->
+                    </group>
+                </field>
+            </field>
+        </record>
+
+
+        <record id="res_partner_code_edi_id" model="ir.ui.view">
+            <field name="name">res.partner.code.edi</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <group  position="inside">
+                    <field name="code_nadby" />
+                    <field name="code_naddp" />
+                </group>
+            </field>
+        </record>
+
+
+        <record id="view_sale_order_form_inherit" model="ir.ui.view">
+            <field name="name">add log sale order</field>
+            <field name="model">sale.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <field name="note" position="after">
+                    <field name="product_exist" placeholder = "Libros no encontrados"/>
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="form_ediversa_id">
+            <field name="name">ediversa.order.form</field>
+            <field name="model">ediversa.order</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Inbox">
+                    <header>
+                        <button string="Buscar" name="confirm" type="object" />
+                        <button string="Procesar" name="create_sale_order" type="object" />
+                    </header>
+                    <shet>
+                        <group col="4">
+                            <field  colspan="2" name="subject" />
+                            <field colspan="2" name="email"/>
+                            <field name="attach" />
+                        </group>
+                    </shet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="tree_ediversa_id">
+            <field name="name">ediversa.order.tree</field>
+            <field name="model">ediversa.order</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Inbox">
+                    <field name="subject"/>
+                    <field name="email"/>
+                    <field name="attach" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_eDiversa_order_form">
+            <field name="name">eDiversa Orders</field>
+            <field name="res_model">ediversa.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="id_principal_ediversa" name="eDiversa" sequence="0"/>
+        <menuitem id="id_buzon_entrada" parent="base.menu_sales" name="eDiversa"  sequence="1"/>
+        <menuitem action="action_eDiversa_order_form" id="id_principal_mensages_act" parent="id_buzon_entrada" name="Messages" sequence="1"/>
+
+        
+
+ 
+
+
+    </data>
+</openerp>

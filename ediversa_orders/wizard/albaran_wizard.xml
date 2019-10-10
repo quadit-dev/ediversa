@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+<data>
+
+
+    <record id="pack_operation_view_picking_form" model="ir.ui.view">
+        <field name="name">pack.operation.view.picking.form</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook/page/field[@name='pack_operation_product_ids']/tree/field[@name='product_id']" position="before">
+                <field name="id_bultos" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="move_view_move_form" model="ir.ui.view">
+        <field name="name">move.view.move.form</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="stock.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="before">
+                <field name="id_bultos" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="move_view_move_tree" model="ir.ui.view">
+        <field name="name">move.view.move.tree</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="stock.view_move_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="before">
+                <field name="id_bultos" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="move_view_move_tree_receipt_picking" model="ir.ui.view">
+        <field name="name">move.view.move.tree.receipt.picking</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="stock.view_move_tree_receipt_picking"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="before">
+                <field name="id_bultos" />
+            </xpath>
+        </field>
+    </record>
+
+ 
+
+
+    <!--======FORM VIEW ======-->
+    <record id="expor_school_amount_form" model="ir.ui.view">
+        <field name="name">export.albaran.txt.form</field>
+        <field name="model">export.albaran.txt</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Albaran" >
+                <header>
+                    <field name="datas_fname" invisible="1" />
+                    <field name="download_file" invisible="1" />
+                </header>
+                <sheet >
+                    <separator colspan="4" string="Presiona Exportar para Generar el albaran"/>
+                    <group col="4">
+                        <field name="type" required="1"/>
+                        <field name="bgm_num_doc" readonly="1"/>
+                        <field name="bgm_tip_doc" required="1"/>
+                        <field name="bgm_fun_men" required="1"/>
+                        <!-- <field name="dtm_entrega" readonly="1"/> -->
+                        <field name = "dtm_creacion" readonly="1"/> 
+                        <field name="ali_info" />
+                        <field name="rff_cali" required="1"/>
+                        <field name="rff_referencia" readonly="1"/>
+                        <field name="rff_fecha" readonly="1"/>
+                        <field name="nadms_cod_emisor_mens" readonly="1"/>
+                        <field name="nadmr_cod_emisor_mens" readonly="1"/>
+                        <field name="nadsu_cod_prove" readonly="1"/>
+                        <field name="nadby_cod_cliente" readonly="1"/>
+                        <field name="naddp_cod_entrega" readonly="1"/>
+                        <field name="pac_num_embalajes" readonly="1"/>
+                        <field name="pac_tipo_unidad" required="1"/>
+                        <field name="pac_tipo_unidad_palet" required="1"/>
+                        <field name="pci_marcaje" readonly="1"/>
+                        <field name="pci_calificador" readonly="1"/>
+                        <field name="lin_tipo_cod" required="1"/>
+                        <field name="imdlin_cali_cod" required="1"/>
+                        <field name="qtylin_cali_cant" required="1"/>
+                        <field name="cntres_lines" readonly="1"/>
+
+                    </group>
+
+                </sheet>
+                <sheet attrs="{'invisible':[('download_file','=',False)]}">
+                    <div >
+                        <h2>Generacion Completa</h2>
+                        <p>Descarga el Documento: <field name="file" readonly="1" filename="datas_fname"/></p>
+                        <p> Documento Generado (TXT - .txt) y Codificado<strong>Unicode/UTF-8</strong></p>
+                    </div>
+                </sheet>
+                <footer attrs="{'invisible':[('download_file','=',False)]}">
+                    <center>
+
+                        <button string="Cerrar" special="cancel"  icon="gtk-cancel" class="oe_highlight"/>
+                    </center>
+                </footer>
+                <footer attrs="{'invisible':[('download_file','=',True)]}">
+                    <center>
+
+                        <button name="process_export" string="Exportar" type="object"  icon="gtk-execute"/>
+                        o
+                        <button string="Cancelar" class="oe_link" special="cancel" icon="gtk-cancel"/>
+                    </center>
+                </footer>
+            </form>
+            </field>
+        </record>
+
+
+    <!--=================ACCION ASISTENTE==================-->
+    <act_window
+        name="Enviar EDIversa"
+        res_model="export.albaran.txt"
+        src_model="stock.picking"
+        view_mode="form" target="new"
+        key2="client_action_multi"
+        id="action_export_report_school"/>
+
+
+</data>
+</openerp>
