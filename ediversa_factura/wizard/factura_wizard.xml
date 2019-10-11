@@ -8,7 +8,7 @@
         <field name="model">export.factura.txt</field>
         <field name="type">form</field>
         <field name="arch" type="xml">
-            <form string="factura" >
+            <form string="factura" width="1000">
                <header>
                     <field name="datas_fname" invisible="1" />
                     <field name="download_file" invisible="1" />
@@ -16,31 +16,27 @@
                 <sheet>
                 	 <separator colspan="4" string="Generar
                     documento de texto plano"/>
-                	<group col="2">
+                	<group col="4" >
 
                 		<field name="inv_numdoc" required="1" readonly="1"/>
                 		<field name="inv_tipo" required="1"/>
                 		<field name="inv_funcion" required="1"/>
-                		<field name = "dtm_creacion" />
+                		<field name = "dtm_creacion" readonly="1" />
                 		<field name = "pai" />
                 		<field name = "ali" />
                 		<field name="rff_cali" required="1"/>
                 		<field name="rff_referencia" required="1"/>
                 		<field name="rff_fecha" required="1"/>
-                       	<field name="nadsco" required="1" readonly="1"/>
-                       	<field name="nadbco" required="1" readonly="1"/>
-                       	<field name="nadsu_cod_prove" required="1"
-                          readonly="1"/>
-                       	<field name="nadby_cod_cliente" required="1"
-                          readonly="1"/>
-                       	<field name="nadiv" required="1"/>
-                       	<field name="nadms" readonly="1"/>
-                       	<field name="nadmr" readonly="1"/>
-                       	<field name="naddp" required="1" />
-                       	<field name="nadpr" />
-                       	<field name="nadpe" />
-                       	<field name="cux_coin" required="1" />
-                       	<field name="cux_cali" required="1" />
+                    <field name="nadsco" required="1" readonly="1"/>
+                    <field name="nadbco" required="1" readonly="1"/>
+                    <field name="nadsu_cod_prove" required="1" readonly="1"/>
+                    <field name="nadby_cod_cliente" required="1" readonly="1"/>
+                    <field name="nadiv" required="1" />
+                    <field name="naddp" required="1" />
+                    <field name="nadpr" />
+                    <field name="nadpe" />
+                    <field name="cux_coin" required="1" />
+                    <field name="cux_cali" required="1" />
 
                        	<p>PAT</p>
                        	<p></p>

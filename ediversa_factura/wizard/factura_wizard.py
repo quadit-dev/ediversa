@@ -46,10 +46,12 @@ class export_factura_txt(models.Model):
                 'nadsco_name':invoice.user_id.name,
                 'nadbco':invoice.partner_id.codigo_provedor,
                 'nadbco_name':invoice.partner_id.name,
+                'nadbco_direc':invoice.partner_id.street,
+                'nadbco_nif':invoice.partner_id.vat,
                 'nadsu_cod_prove':invoice.user_id.codigo_provedor,
                 'nadby_cod_cliente':invoice.partner_id.codigo_provedor,
-
-
+                'nadms':invoice.partner_id.codigo_provedor,
+                'nadmr':invoice.user_id.codigo_provedor,
                 })
 
         return res
@@ -98,7 +100,6 @@ class export_factura_txt(models.Model):
         ('80E', 'Bonificaciones anuales (Rappel)')],
         'Condiciones especiales')
 
-
     rff_cali = fields.Selection([
         ('DQ', 'Numero de albaran en papel'),
         ('ON', 'Numero de pedido'),
@@ -112,6 +113,8 @@ class export_factura_txt(models.Model):
     nadsco_name = fields.Char('nombre emisor')
     nadbco = fields.Char('codigo EDI receptor')
     nadbco_name = fields.Char('codigo EDI receptor')
+    nadbco_direc = fields.Char('street')
+    nadbco_nif = fields.Char('nif')
     nadsu_cod_prove = fields.Char('codigo EDI Proveedor')
     nadby_cod_cliente = fields.Char('codigo EDI Cliente')
     nadiv = fields.Char('Codigo EDI a quien se factura')
@@ -255,8 +258,9 @@ class export_factura_txt(models.Model):
 
         document_txt = document_txt+ sl + campo_nadsco
 
-        campo_nadbco ="%s|%s|%s" % (
-                "NADBCO",self.nadbco,self.nadbco_name)
+        campo_nadbco ="%s|%s|%s|%s|%s" % (
+                "NADBCO",self.nadbco,self.nadbco_name,self.nadbco_direc,
+                self.nadbco_nif)
 
         document_txt = document_txt+ sl + campo_nadbco
 
@@ -269,6 +273,16 @@ class export_factura_txt(models.Model):
                 "NADBY",self.nadby_cod_cliente,self.nadbco_name)
 
         document_txt = document_txt+ sl + campo_nadby
+
+        campo_nadms="%s|%s" % (
+                "NADMS",self.nadms)
+
+        document_txt = document_txt+ sl + campo_nadms
+
+        campo_nadmr="%s|%s" % (
+                "NADMR",self.nadmr)
+
+        document_txt = document_txt+ sl + campo_nadmr
 
         campo_cux = "%s|%s|%s" % (
                 "CUX", self.cux_coin,self.cux_cali)
