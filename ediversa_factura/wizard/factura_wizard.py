@@ -45,7 +45,10 @@ class export_factura_txt(models.Model):
                 'nadsco':invoice.user_id.codigo_provedor,
                 'nadsco_name':invoice.user_id.name,
                 'nadbco':invoice.partner_id.codigo_provedor,
-                'nadbco_name':invoice.partner_id.name
+                'nadbco_name':invoice.partner_id.name,
+                'nadsu_cod_prove':invoice.user_id.codigo_provedor,
+                'nadby_cod_cliente':invoice.partner_id.codigo_provedor,
+
 
                 })
 
@@ -197,31 +200,30 @@ class export_factura_txt(models.Model):
     @api.multi
     def export_txt_file(self):
         document_txt = ""
-        print("---DDDDDDD______dddddd",self.env['account.invoice'])
         #split de fecha creacion
         split_creacion = self.dtm_creacion.split('-')
         split_creacion_dia = split_creacion[2].split(' ')
-        date_creacion = split_creacion[0]+split_creacion[1]+split_creacion_dia[0]
+        date_creacion = split_creacion[0]+split_creacion[1]+split_creacion_dia[0]  # noqa
 
         #split de fecha referencia
         split_creacion = self.rff_fecha.split('-')
         split_creacion_dia = split_creacion[2].split(' ')
-        date_referencia = split_creacion[0]+split_creacion[1]+split_creacion_dia[0]
+        date_referencia = split_creacion[0]+split_creacion[1]+split_creacion_dia[0]  # noqa
 
         #split de fecha pat_ve,
         split_creacion = self.pat_ven.split('-')
         split_creacion_dia = split_creacion[2].split(' ')
-        date_pat_ven = split_creacion[0]+split_creacion[1]+split_creacion_dia[0]
+        date_pat_ven = split_creacion[0]+split_creacion[1]+split_creacion_dia[0]  # noqa
 
         #split de fecha pat_efec,
         split_creacion = self.pat_efect.split('-')
         split_creacion_dia = split_creacion[2].split(' ')
-        date_pat_ref = split_creacion[0]+split_creacion[1]+split_creacion_dia[0]
+        date_pat_ref = split_creacion[0]+split_creacion[1]+split_creacion_dia[0]  # noqa
 
         #split de fecha pat_ent,
         split_creacion = self.pat_entrega.split('-')
         split_creacion_dia = split_creacion[2].split(' ')
-        date_pat_ent = split_creacion[0]+split_creacion[1]+split_creacion_dia[0]
+        date_pat_ent = split_creacion[0]+split_creacion[1]+split_creacion_dia[0]  # noqa
 
         sl = "\n"
 
@@ -257,6 +259,16 @@ class export_factura_txt(models.Model):
                 "NADBCO",self.nadbco,self.nadbco_name)
 
         document_txt = document_txt+ sl + campo_nadbco
+
+        campo_nadsu="%s|%s|%s" % (
+                "NADSU",self.nadsu_cod_prove,self.nadsco_name)
+
+        document_txt = document_txt+ sl + campo_nadsu
+
+        campo_nadby="%s|%s|%s" % (
+                "NADBY",self.nadby_cod_cliente,self.nadbco_name)
+
+        document_txt = document_txt+ sl + campo_nadby
 
         campo_cux = "%s|%s|%s" % (
                 "CUX", self.cux_coin,self.cux_cali)

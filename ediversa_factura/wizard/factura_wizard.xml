@@ -14,9 +14,10 @@
                     <field name="download_file" invisible="1" />
                 </header>
                 <sheet>
-                	 <separator colspan="4" string="Generar documento de texto plano"/>
+                	 <separator colspan="4" string="Generar
+                    documento de texto plano"/>
                 	<group col="2">
-                		
+
                 		<field name="inv_numdoc" required="1" readonly="1"/>
                 		<field name="inv_tipo" required="1"/>
                 		<field name="inv_funcion" required="1"/>
@@ -28,17 +29,19 @@
                 		<field name="rff_fecha" required="1"/>
                        	<field name="nadsco" required="1" readonly="1"/>
                        	<field name="nadbco" required="1" readonly="1"/>
-                       	<field name="nadsu_cod_prove" required="1" />
-                       	<field name="nadby_cod_cliente" required="1" />
-                       	<field name="nadiv" required="1" />
-                       	<field name="nadms" />
-                       	<field name="nadmr" />
+                       	<field name="nadsu_cod_prove" required="1"
+                          readonly="1"/>
+                       	<field name="nadby_cod_cliente" required="1"
+                          readonly="1"/>
+                       	<field name="nadiv" required="1"/>
+                       	<field name="nadms" readonly="1"/>
+                       	<field name="nadmr" readonly="1"/>
                        	<field name="naddp" required="1" />
-                       	<field name="nadpr" /> 
+                       	<field name="nadpr" />
                        	<field name="nadpe" />
                        	<field name="cux_coin" required="1" />
                        	<field name="cux_cali" required="1" />
-                       	
+
                        	<p>PAT</p>
                        	<p></p>
                        	<field name="pat_cali" />
@@ -74,22 +77,28 @@
                  <sheet attrs="{'invisible':[('download_file','=',False)]}">
                     <div >
                         <h2>Generacion Completa</h2>
-                        <p>Descarga el Documento: <field name="file" readonly="1" filename="datas_fname"/></p>
-                        <p> Documento Generado (TXT - .txt) y Codificado<strong>Unicode/UTF-8</strong></p>
+                        <p>Descarga el Documento: <field
+                          name="file" readonly="1"
+                          filename="datas_fname"/></p>
+                        <p> Documento Generado (TXT - .txt) y Codificado
+                          <strong>Unicode/UTF-8</strong></p>
                     </div>
                 </sheet>
                 <footer attrs="{'invisible':[('download_file','=',False)]}">
                     <center>
 
-                        <button string="Cerrar" special="cancel"  icon="gtk-cancel" class="oe_highlight"/>
+                        <button string="Cerrar" special="cancel"
+                          icon="gtk-cancel" class="oe_highlight"/>
                     </center>
                 </footer>
                  <footer attrs="{'invisible':[('download_file','=',True)]}">
                     <center>
 
-                        <button name="export_txt_file" string="Generar" type="object"  icon="gtk-execute"/>
-                        
-                        <button string="Cancelar" class="oe_link" special="cancel" icon="gtk-cancel"/>
+                        <button name="export_txt_file"
+                          string="Generar" type="object"  icon="gtk-execute"/>
+
+                        <button string="Cancelar" class="oe_link"
+                          special="cancel" icon="gtk-cancel"/>
                     </center>
                 </footer>
             </form>
