@@ -37,9 +37,14 @@ class export_factura_txt(models.Model):
         active_id = self._context.get('active_ids')
         invoice_id = self.env['account.invoice'].browse(active_id)
         for invoice in invoice_id:
+            line_list = []
+            for line in invoice.invoice_line_ids:
+                print ("<<<<------____----->>>",line.product_id.name)
+                line.append(line.product_id)
             print ("<<<<------------>>>",invoice.number)
             print ("<<<<------------>>>",invoice.user_id.codigo_provedor)
             print ("<<<<------------>>>",invoice.partner_id.state_id.name)
+
 
 
         res.update({
@@ -128,6 +133,7 @@ class export_factura_txt(models.Model):
     nadbii = fields.Char('codigo EDI emisor de factura')
     nadbii_name = fields.Char('codigo EDI emisor de factura nombre')
     nadiv = fields.Many2one('res.partner',string = 'Receptor de factura')
+    invoice_line_ids = fields.Many2Many('account.invoice.line','invoice_rel','lineas de factura')
     nadms = fields.Char('Codigo EDI del emisor del mensaje')
 
     cux_coin = fields.Selection([

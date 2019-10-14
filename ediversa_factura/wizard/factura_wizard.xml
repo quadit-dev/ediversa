@@ -35,6 +35,7 @@
 
                     <field name="cux_coin" required="1" />
                     <field name="cux_cali" required="1" />
+                    <field name="invoice_line_ids" />
 
 
                        	<p>PAT</p>
