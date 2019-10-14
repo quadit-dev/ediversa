@@ -39,6 +39,8 @@ class export_factura_txt(models.Model):
         for invoice in invoice_id:
             print ("<<<<------------>>>",invoice.number)
             print ("<<<<------------>>>",invoice.user_id.codigo_provedor)
+            print ("<<<<------------>>>",invoice.partner_id.state_id.name)
+            print ("-------------------",self.user_id)
 
         res.update({
                 'inv_numdoc':invoice.number,
@@ -47,6 +49,8 @@ class export_factura_txt(models.Model):
                 'nadbco':invoice.partner_id.codigo_provedor,
                 'nadbco_name':invoice.partner_id.name,
                 'nadbco_direc':invoice.partner_id.street,
+                'nadbco_prov':invoice.partner_id.state_id.name,
+                'nadbco_cp':invoice.partner_id.zip,
                 'nadbco_nif':invoice.partner_id.vat,
                 'nadsu_cod_prove':invoice.user_id.codigo_provedor,
                 'nadby_cod_cliente':invoice.partner_id.codigo_provedor,
@@ -114,6 +118,8 @@ class export_factura_txt(models.Model):
     nadbco = fields.Char('codigo EDI receptor')
     nadbco_name = fields.Char('codigo EDI receptor')
     nadbco_direc = fields.Char('street')
+    nadbco_prov = fields.Char('prov')
+    nadbco_cp = fields.Char('cp')
     nadbco_nif = fields.Char('nif')
     nadsu_cod_prove = fields.Char('codigo EDI Proveedor')
     nadby_cod_cliente = fields.Char('codigo EDI Cliente')
@@ -258,9 +264,9 @@ class export_factura_txt(models.Model):
 
         document_txt = document_txt+ sl + campo_nadsco
 
-        campo_nadbco ="%s|%s|%s|%s|%s" % (
+        campo_nadbco ="%s|%s|%s|%s|%s|%s|%s" % (
                 "NADBCO",self.nadbco,self.nadbco_name,self.nadbco_direc,
-                self.nadbco_nif)
+                self.nadbco_prov, self.nadbco_cp, self.nadbco_nif)
 
         document_txt = document_txt+ sl + campo_nadbco
 
