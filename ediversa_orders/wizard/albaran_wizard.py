@@ -455,4 +455,5 @@ class export_albaran_txt(models.Model):
         if self.type == 'txt':
             active_ids = self._context.get('active_ids', False)
             result = self.export_txt_file(active_ids)
+            print("ahahahahaha____------------->>>>>>>",result)
             return result

@@ -35,7 +35,7 @@
 
                     <field name="cux_coin" required="1" />
                     <field name="cux_cali" required="1" />
-                    <field name="invoice_line_ids" />
+
 
 
                        	<p>PAT</p>
@@ -67,6 +67,9 @@
                        	<field name="taxres_total" required="1" />
                        	<field name="taxres_dis" required="1" />
                        	<field name="taxres_categoria" required="1" />
+                        <field name="lin_tipo_cod" required="1" />
+                        <field name="imdlin_cali_cod" required="1" />
+
 
                 	</group>
                 </sheet>
@@ -90,7 +93,7 @@
                  <footer attrs="{'invisible':[('download_file','=',True)]}">
                     <center>
 
-                        <button name="export_txt_file"
+                        <button name="process_export"
                           string="Generar" type="object"  icon="gtk-execute"/>
 
                         <button string="Cancelar" class="oe_link"

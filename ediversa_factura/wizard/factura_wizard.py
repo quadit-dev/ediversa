@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+# CONTEXTO, LISTA Y RELACIONALES PARA TOMAR LOS VALORES DE LOS PRODUCTOS
 
 from openerp import _, api, fields, models
 from openerp.tools.translate import _
@@ -37,13 +37,10 @@ class export_factura_txt(models.Model):
         active_id = self._context.get('active_ids')
         invoice_id = self.env['account.invoice'].browse(active_id)
         for invoice in invoice_id:
-            line_list = []
+            #line_list = []
             for line in invoice.invoice_line_ids:
-                print ("<<<<------____----->>>",line.product_id.name)
-                line.append(line.product_id)
-            print ("<<<<------------>>>",invoice.number)
-            print ("<<<<------------>>>",invoice.user_id.codigo_provedor)
-            print ("<<<<------------>>>",invoice.partner_id.state_id.name)
+                print ("<<<<------------>>>",line.name)
+
 
 
 
@@ -133,7 +130,7 @@ class export_factura_txt(models.Model):
     nadbii = fields.Char('codigo EDI emisor de factura')
     nadbii_name = fields.Char('codigo EDI emisor de factura nombre')
     nadiv = fields.Many2one('res.partner',string = 'Receptor de factura')
-    invoice_line_ids = fields.Many2Many('account.invoice.line','invoice_rel','lineas de factura')
+    #invoice_line_ids = fields.Many2Many('account.invoice.line','invoice_rel','lineas de factura')
     nadms = fields.Char('Codigo EDI del emisor del mensaje')
 
     cux_coin = fields.Selection([
@@ -181,7 +178,16 @@ class export_factura_txt(models.Model):
     moares_descuentos = fields.Integer('Total de descuentos globales')
     moares_cargos = fields.Integer('Total de cargos globales')
     moares_debido = fields.Integer('Importe total a pagar')
-
+    lin_tipo_cod = fields.Selection([
+            ('EN', 'EAN13'),
+            ('UP', 'UPC'),
+            ('SRV','Número único de acuerdo con la estructura'),
+            ('IB','Número normalizado de publicación')],
+            'Tipo de codificacion', required=True, default="EN")
+    imdlin_cali_cod = fields.Selection([
+        ('F', 'Descripcion texto Libre'),
+        ('C', 'Descripcion Codificada')],
+        'Calificador de descripcion', required=True, default="F")
     taxres_tipo = fields.Selection([
         ('VAT', 'IVA'),
         ('IGI', 'IGIC'),
@@ -214,7 +220,8 @@ class export_factura_txt(models.Model):
     }
 
     @api.multi
-    def export_txt_file(self):
+    def export_txt_file(self,picking_ids):
+        print("_________________________-----",picking_ids)
         document_txt = ""
         #split de fecha creacion
         split_creacion = self.dtm_creacion.split('-')
@@ -336,6 +343,20 @@ class export_factura_txt(models.Model):
 
         # =>Fin Cabecera
 
+        # => Cuepo
+
+        for move in self.env['account.invoice'].browse(
+            picking_ids).invoice_line_ids:
+            campo_lin = "%s|%s|%s|%s" % (
+                "LIN", move.product_id.barcode,self.lin_tipo_cod,"1")
+            document_txt = document_txt+ sl + campo_lin
+            campo_pialin = "%s|%s|%s" % (
+                "PIALIN" ,"", move.product_id.barcode)
+            document_txt = document_txt+ sl + campo_pialin
+            campo_imdlin = "%s|%s|%s" % (
+                "IMDLIN",  move.product_id.name,self.imdlin_cali_cod)
+            document_txt = document_txt+ sl + campo_imdlin
+
 
         # =>Resumen
 
@@ -378,6 +399,16 @@ class export_factura_txt(models.Model):
             'views': [(False, 'form')],
             'target': 'new',
         }
+
+
+
+    @api.multi
+    def process_export(self,):
+        if self.type == 'txt':
+            active_ids = self._context.get('active_ids', False)
+            result = self.export_txt_file(active_ids)
+            print("ahahahahaha____------------->>>>>>>",result)
+            return result
 
 
 
