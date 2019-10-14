@@ -16,7 +16,7 @@
                 <sheet>
                 	 <separator colspan="4" string="Generar
                     documento de texto plano"/>
-                	<group col="4" >
+                	<group col="2" >
 
                 		<field name="inv_numdoc" required="1" readonly="1"/>
                 		<field name="inv_tipo" required="1"/>
@@ -31,12 +31,11 @@
                     <field name="nadbco" required="1" readonly="1"/>
                     <field name="nadsu_cod_prove" required="1" readonly="1"/>
                     <field name="nadby_cod_cliente" required="1" readonly="1"/>
-                    <field name="nadiv" required="1" />
-                    <field name="naddp" required="1" />
-                    <field name="nadpr" />
-                    <field name="nadpe" />
+                    <field name="nadiv" />
+
                     <field name="cux_coin" required="1" />
                     <field name="cux_cali" required="1" />
+
 
                        	<p>PAT</p>
                        	<p></p>

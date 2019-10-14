@@ -40,7 +40,7 @@ class export_factura_txt(models.Model):
             print ("<<<<------------>>>",invoice.number)
             print ("<<<<------------>>>",invoice.user_id.codigo_provedor)
             print ("<<<<------------>>>",invoice.partner_id.state_id.name)
-            print ("-------------------",self.user_id)
+
 
         res.update({
                 'inv_numdoc':invoice.number,
@@ -54,6 +54,8 @@ class export_factura_txt(models.Model):
                 'nadbco_nif':invoice.partner_id.vat,
                 'nadsu_cod_prove':invoice.user_id.codigo_provedor,
                 'nadby_cod_cliente':invoice.partner_id.codigo_provedor,
+                'nadbii':invoice.user_id.codigo_provedor,
+                'nadbii_name':invoice.user_id.name,
                 'nadms':invoice.partner_id.codigo_provedor,
                 'nadmr':invoice.user_id.codigo_provedor,
                 })
@@ -85,7 +87,7 @@ class export_factura_txt(models.Model):
         ('2', 'Adición (Complementaria)')],
         'Función del mensaje')
 
-    user_id = fields.Many2one('account.invoice','user_id')
+
 
     pai = fields.Selection([
         ('20', 'Cheque'),
@@ -123,12 +125,11 @@ class export_factura_txt(models.Model):
     nadbco_nif = fields.Char('nif')
     nadsu_cod_prove = fields.Char('codigo EDI Proveedor')
     nadby_cod_cliente = fields.Char('codigo EDI Cliente')
-    nadiv = fields.Char('Codigo EDI a quien se factura')
+    nadbii = fields.Char('codigo EDI emisor de factura')
+    nadbii_name = fields.Char('codigo EDI emisor de factura nombre')
+    nadiv = fields.Many2one('res.partner',string = 'Receptor de factura')
     nadms = fields.Char('Codigo EDI del emisor del mensaje')
-    nadmr = fields.Char('Codigo EDI del receptor del mensaje')
-    naddp = fields.Char('Codigo EDI del receptor de la mercancía')
-    nadpr = fields.Char('Codigo EDI del emisor del pago')
-    nadpe = fields.Char('Codigo EDI del receptor que paga')
+
     cux_coin = fields.Selection([
         ('EUR', 'Euro'),
         ('USD', 'Dolar')],
@@ -280,20 +281,44 @@ class export_factura_txt(models.Model):
 
         document_txt = document_txt+ sl + campo_nadby
 
+        campo_nadii="%s|%s|%s" % (
+                "NADII",self.nadbii, self.nadbii_name)
+
+        document_txt = document_txt+ sl + campo_nadii
+
+        campo_nadiv="%s|%s|%s||||%s" % (
+                "NADIV",self.nadiv.codigo_provedor, self.nadiv.name,
+                self.nadiv.vat)
+
+        document_txt = document_txt+ sl + campo_nadiv
+
         campo_nadms="%s|%s" % (
                 "NADMS",self.nadms)
 
         document_txt = document_txt+ sl + campo_nadms
 
-        campo_nadmr="%s|%s" % (
-                "NADMR",self.nadmr)
+        campo_nadmr="%s|%s|%s||||%s" % (
+                "NADMR",self.nadiv.codigo_provedor, self.nadiv.name,
+                self.nadiv.vat)
 
         document_txt = document_txt+ sl + campo_nadmr
+
+        campo_naddp="%s|%s|%s||||%s" % (
+                "NADDP",self.nadiv.codigo_provedor, self.nadiv.name,
+                self.nadiv.vat)
+
+        document_txt = document_txt+ sl + campo_naddp
+
+        campo_nadpr  ="%s|%s|%s" % (
+                "NADPR",self.nadsco,self.nadsco_name)
+
+        document_txt = document_txt+ sl + campo_nadpr
 
         campo_cux = "%s|%s|%s" % (
                 "CUX", self.cux_coin,self.cux_cali)
 
         document_txt = document_txt+ sl + campo_cux
+
 
         if self.pat_cali:
             campo_pat = "%s|%s|%s|%s|%s|%s|%s|%s|%s" % (
