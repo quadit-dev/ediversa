@@ -60,6 +60,8 @@ class export_factura_txt(models.Model):
                 'nadbii_name':invoice.user_id.name,
                 'nadms':invoice.partner_id.codigo_provedor,
                 'nadmr':invoice.user_id.codigo_provedor,
+                'nadpe':invoice.partner_id.codigo_provedor,
+                'nadpe_name':invoice.partner_id.name,
                 })
 
         return res
@@ -130,8 +132,10 @@ class export_factura_txt(models.Model):
     nadbii = fields.Char('codigo EDI emisor de factura')
     nadbii_name = fields.Char('codigo EDI emisor de factura nombre')
     nadiv = fields.Many2one('res.partner',string = 'Receptor de factura')
-    #invoice_line_ids = fields.Many2Many('account.invoice.line','invoice_rel','lineas de factura')
+    naddp = fields.Many2one('res.partner',string = 'Receptor de mercancia')
     nadms = fields.Char('Codigo EDI del emisor del mensaje')
+    nadpe = fields.Char('receptor del pago')
+    nadpe_name = fields.Char('receptor del pago nombre')
 
     cux_coin = fields.Selection([
         ('EUR', 'Euro'),
@@ -170,6 +174,8 @@ class export_factura_txt(models.Model):
         readonly = False,
         select = True,
         default = lambda self: fields.datetime.now ())
+
+
     moares_neto = fields.Integer('Importe neto de la factura')
     moares_bruto = fields.Integer('Importe bruto')
     moares_base = fields.Integer('Base imponible')
@@ -185,9 +191,35 @@ class export_factura_txt(models.Model):
             ('IB','Número normalizado de publicación')],
             'Tipo de codificacion', required=True, default="EN")
     imdlin_cali_cod = fields.Selection([
-        ('F', 'Descripcion texto Libre'),
-        ('C', 'Descripcion Codificada')],
-        'Calificador de descripcion', required=True, default="F")
+        ('M', 'Mercancía'),
+        ('C', 'Material consignado'),
+        ('38','EStilo, Para libros'),
+        ('79','Familia,Para peliculas'),
+        ('86','Estilo, Para discos'),
+        ('98','Talla'),
+        ('UP5','Tamaño u horma del artículo'),
+        ('U03','Nombre del dibujo del articulo'),
+        ('DSC','Mercancia DSC')],
+        'Calificador de descripcion', required=True, default="M")
+    qtylin_cal = fields.Selection([
+        ('46', 'Cantidad entregada'),
+        ('47', 'Cantidad facturada'),
+        ('61', 'Cantida de devolución'),
+        ('15E','Cantidad de mercancia'),
+        ('12','Cantidad enviada por el proovedor'),
+        ('59','Número de unidades de consumo')],
+        'Calificador de cantidad', required=True, default="47")
+    qtylin_uni = fields.Selection([
+        ('KGM', 'Kilogramos'),
+        ('PCE', 'Unidades'),
+        ('LTR', 'Litros'),
+        ('UN','Unidad de consumo'),
+        ('NAR','Numero de artículo'),
+        ('EA','Cada'),
+        ('MTQ','Metro cúbico'),
+        ('TNE','Tonelada'),
+        ('MTR','Metro')],
+        'Especificador de la unidad de medida', required=True, default="PCE")
     taxres_tipo = fields.Selection([
         ('VAT', 'IVA'),
         ('IGI', 'IGIC'),
@@ -310,22 +342,29 @@ class export_factura_txt(models.Model):
 
         document_txt = document_txt+ sl + campo_nadms
 
-        campo_nadmr="%s|%s|%s||||%s" % (
+        campo_nadmr="%s|%s|%s|||||%s" % (
                 "NADMR",self.nadiv.codigo_provedor, self.nadiv.name,
                 self.nadiv.vat)
 
         document_txt = document_txt+ sl + campo_nadmr
 
-        campo_naddp="%s|%s|%s||||%s" % (
-                "NADDP",self.nadiv.codigo_provedor, self.nadiv.name,
-                self.nadiv.vat)
+        campo_naddp="%s|%s|%s|%s|%s|%s||%s" % (
+                "NADDP",self.naddp.codigo_provedor, self.naddp.name,
+                self.naddp.street,self.naddp.state_id.name, self.naddp.zip,
+                self.naddp.vat)
 
         document_txt = document_txt+ sl + campo_naddp
 
-        campo_nadpr  ="%s|%s|%s" % (
-                "NADPR",self.nadsco,self.nadsco_name)
+        campo_nadpr  ="%s|%s|%s||||%s" % (
+                "NADPR",self.nadiv.codigo_provedor, self.nadiv.name,
+                self.nadiv.vat)
 
         document_txt = document_txt+ sl + campo_nadpr
+
+        campo_nadpe  ="%s|%s|%s" % (
+                "NADPE",self.nadpe, self.nadpe_name)
+
+        document_txt = document_txt+ sl + campo_nadpe
 
         campo_cux = "%s|%s|%s" % (
                 "CUX", self.cux_coin,self.cux_cali)
@@ -350,12 +389,16 @@ class export_factura_txt(models.Model):
             campo_lin = "%s|%s|%s|%s" % (
                 "LIN", move.product_id.barcode,self.lin_tipo_cod,"1")
             document_txt = document_txt+ sl + campo_lin
-            campo_pialin = "%s|%s|%s" % (
-                "PIALIN" ,"", move.product_id.barcode)
+            campo_pialin = "%s|%s" % (
+                "PIALIN" , move.product_id.barcode)
             document_txt = document_txt+ sl + campo_pialin
-            campo_imdlin = "%s|%s|%s" % (
-                "IMDLIN",  move.product_id.name,self.imdlin_cali_cod)
+            campo_imdlin = "%s|%s|%s|%s" % (
+                "IMDLIN",  move.product_id.name,self.imdlin_cali_cod,"F")
             document_txt = document_txt+ sl + campo_imdlin
+            campo_qtylin = "%s|%s|%s|%s" % (
+                "QTYLIN",self.qtylin_cal,move.quantity,
+                self.qtylin_uni)
+            document_txt = document_txt+ sl + campo_qtylin
 
 
         # =>Resumen
