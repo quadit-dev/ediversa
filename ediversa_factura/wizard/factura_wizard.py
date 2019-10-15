@@ -184,6 +184,7 @@ class export_factura_txt(models.Model):
     moares_descuentos = fields.Integer('Total de descuentos globales')
     moares_cargos = fields.Integer('Total de cargos globales')
     moares_debido = fields.Integer('Importe total a pagar')
+    #LIN ARTICULOS #
     lin_tipo_cod = fields.Selection([
             ('EN', 'EAN13'),
             ('UP', 'UPC'),
@@ -220,6 +221,7 @@ class export_factura_txt(models.Model):
         ('TNE','Tonelada'),
         ('MTR','Metro')],
         'Especificador de la unidad de medida', required=True, default="PCE")
+    #Terminan los articulos
     taxres_tipo = fields.Selection([
         ('VAT', 'IVA'),
         ('IGI', 'IGIC'),
@@ -382,7 +384,7 @@ class export_factura_txt(models.Model):
 
         # =>Fin Cabecera
 
-        # => Cuepo
+        # => Cuepo articulos
 
         for move in self.env['account.invoice'].browse(
             picking_ids).invoice_line_ids:
@@ -399,6 +401,12 @@ class export_factura_txt(models.Model):
                 "QTYLIN",self.qtylin_cal,move.quantity,
                 self.qtylin_uni)
             document_txt = document_txt+ sl + campo_qtylin
+            campo_moalin = "%s|%s" % (
+                "MOALIN",move.price_unit)
+            document_txt = document_txt+ sl + campo_moalin
+            campo_prilin = "%s|%s|%s" % (
+                "PRILIN","AAA",(move.price_unit*.16)+move.price_unit)
+            document_txt = document_txt+ sl + campo_prilin
 
 
         # =>Resumen
