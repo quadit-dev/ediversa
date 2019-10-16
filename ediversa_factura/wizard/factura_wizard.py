@@ -37,10 +37,7 @@ class export_factura_txt(models.Model):
         active_id = self._context.get('active_ids')
         invoice_id = self.env['account.invoice'].browse(active_id)
         for invoice in invoice_id:
-            #line_list = []
-            for line in invoice.invoice_line_ids:
-                print ("<<<<------------>>>",line.name)
-
+            print("___________------____________",invoice.amount_total)
 
 
 
@@ -62,12 +59,16 @@ class export_factura_txt(models.Model):
                 'nadmr':invoice.user_id.codigo_provedor,
                 'nadpe':invoice.partner_id.codigo_provedor,
                 'nadpe_name':invoice.partner_id.name,
+                'moares_neto':invoice.amount_total,
+                'moares_bruto':invoice.amount_untaxed,
+                'moares_base':invoice.amount_total,
                 })
 
         return res
 
     datas_fname = fields.Char('File Name', size=256)
     download_file = fields.Boolean('Descargar Archivo')
+    #Inicia Cabecera
     dtm_creacion = fields.Datetime ('Fecha creacion',
         readonly = False,
         select = True ,
@@ -90,8 +91,6 @@ class export_factura_txt(models.Model):
         ('31', 'Copia'),
         ('2', 'Adición (Complementaria)')],
         'Función del mensaje')
-
-
 
     pai = fields.Selection([
         ('20', 'Cheque'),
@@ -174,16 +173,7 @@ class export_factura_txt(models.Model):
         readonly = False,
         select = True,
         default = lambda self: fields.datetime.now ())
-
-
-    moares_neto = fields.Integer('Importe neto de la factura')
-    moares_bruto = fields.Integer('Importe bruto')
-    moares_base = fields.Integer('Base imponible')
-    moares_total = fields.Integer('Importe total de la factura')
-    moares_impuestos = fields.Integer('Total de impuestos')
-    moares_descuentos = fields.Integer('Total de descuentos globales')
-    moares_cargos = fields.Integer('Total de cargos globales')
-    moares_debido = fields.Integer('Importe total a pagar')
+    #termina cabecera#
     #LIN ARTICULOS #
     lin_tipo_cod = fields.Selection([
             ('EN', 'EAN13'),
@@ -221,25 +211,86 @@ class export_factura_txt(models.Model):
         ('TNE','Tonelada'),
         ('MTR','Metro')],
         'Especificador de la unidad de medida', required=True, default="PCE")
+    taxlin = fields.Selection([
+        ('VAT', 'IVA'),
+        ('IGI', 'IGIC'),
+        ('EXT', 'Exento de impuesto'),
+        ('ACT', 'Impuesto de alcoholes'),
+        ('RE', 'Recargo de equivalencia'),
+        ('ENV', 'Punto verde'),
+        ('RET', 'Retenciones por servicios profesionales')],
+        'Calificador de tipo de impuesto',required=True, default="VAT")
+    alclin_cal = fields.Selection([
+        ('A', 'Descuento'),
+        ('C', 'Cargo'),
+        ('N','El descuento indicado es solo a nivel informativo')],
+        'Indicador de descuento /cargo',required=True, default="A")
+    alclin_sec = fields.Selection([
+        ('1', 'Uno'),
+        ('2', 'Dos'),
+        ('3', 'Tres'),
+        ('4', 'Cuatro'),
+        ('5', 'Cinco'),
+        ('6', 'Seis'),
+        ('7', 'Siete'),
+        ('8', 'Ocho'),
+        ('9','Nueve')],
+        'Secuencia',required=True, default="1")
+    alclin_tipo = fields.Selection([
+        ('ABH', 'Rappel'),
+        ('TD', 'Descuento comercial'),
+        ('ACQ', 'Royalties'),
+        ('MC', 'Tasa harinas cárnicas'),
+        ('VEJ', 'Punto verde'),
+        ('AA', 'Cargo por publicidad CTV'),
+        ('EAB', 'Descuento por pronto pago'),
+        ('CRS', 'Gestión de los residuos históricos'),
+        ('PAD', 'Abono promocional'),
+        ('FC', 'Cargo por fletes'),
+        ('PC', 'Cargo por embalajes'),
+        ('SH', 'Cargo por montajes'),
+        ('IN', 'Cargo por seguros'),
+        ('CW', 'escuento por contenedor o envase retornado'),
+        ('RAD', 'Cargo por contenedor o envase retornable'),
+        ('XZ1', 'Tasa Ecopilas'),
+        ('F1','Cargo financiero')],
+        'Descuentos y cargos por línea de detalle',required=True, default="TD")
     #Terminan los articulos
+    moares_neto = fields.Float('Importe neto de la factura')
+    moares_bruto = fields.Float('Importe bruto')
+    moares_base = fields.Float('Base imponible')
+    moares_total = fields.Float('Importe total de la factura')
+    moares_impuestos = fields.Float('Total de impuestos')
+    moares_descuentos = fields.Float('Total de descuentos globales')
+    moares_cargos = fields.Float('Total de cargos globales')
+    moares_debido = fields.Float('Importe total a pagar')
+
+    taxres_porcentaje = fields.Float('Porcentaje del impuesto aplicar')
+    taxres_importe = fields.Float('Suma total de los importes del impuesto')
+    taxres_base = fields.Float('Importe monetario de la base imponible')
+    taxres_total = fields.Float('Importe del impuesto')
+    taxres_dis = fields.Float(
+        'Disposición nacional que da lugar a la exención del IVA')
+    taxres_categoria = fields.Selection([
+        ('E', 'Exento de impuestos'),
+        ('ES1', 'Se aplica el régimen especial del criterio de caja')],
+        'Categoría del impuesto')
     taxres_tipo = fields.Selection([
         ('VAT', 'IVA'),
         ('IGI', 'IGIC'),
         ('EXT', 'Exento de impuesto'),
         ('ACT', 'Impuesto de alcoholes'),
         ('RE', 'Recargo de equivalencia'),
-        ('ENV', 'Punto verde')],
-        'Calificador de tipo de impuesto')
-    taxres_porcentaje = fields.Integer('Porcentaje del impuesto aplicar')
-    taxres_importe = fields.Integer('Suma total de los importes del impuesto')
-    taxres_base = fields.Integer('Importe monetario de la base imponible')
-    taxres_total = fields.Integer('Importe del impuesto')
-    taxres_dis = fields.Integer(
-        'Disposición nacional que da lugar a la exención del IVA')
-    taxres_categoria = fields.Selection([
-        ('E', 'Exento de impuestos'),
-        ('ES1', 'Se aplica el régimen especial del criterio de caja')],
-        'Categoría del impuesto')
+        ('ENV', 'Punto verde'),
+        ('RET', 'Retenciones por servicios profesionales'),
+        ('TA1', 'Harinas cárnicas'),
+        ('OTH', 'Otros impuestos'),
+        ('TA2', 'Residuos de aparatos electrónicos o eléctricos'),
+        ('TA3', 'Neumáticos fuera de uso'),
+        ('TA4', 'Aceites industriales usados'),
+        ('TA6', 'Reciclaje de pilas y acumuladores usados'),
+        ('TBT', 'Impuesto Labores de de Tabaco de Canarias')],
+        'Impuestos totales',required=True, default="VAT")
 
 
     file = fields.Binary('Layout')
@@ -384,7 +435,7 @@ class export_factura_txt(models.Model):
 
         # =>Fin Cabecera
 
-        # => Cuepo articulos
+        # => Cuerpo articulos
 
         for move in self.env['account.invoice'].browse(
             picking_ids).invoice_line_ids:
@@ -405,17 +456,30 @@ class export_factura_txt(models.Model):
                 "MOALIN",move.price_unit)
             document_txt = document_txt+ sl + campo_moalin
             campo_prilin = "%s|%s|%s" % (
-                "PRILIN","AAA",(move.price_unit*.16)+move.price_unit)
+                "PRILIN","AAA",((move.price_unit*.16)+move.price_unit)*move.quantity)  # noqa
             document_txt = document_txt+ sl + campo_prilin
+            campo_prilin = "%s|%s|%s" % (
+                "PRILIN","AAB",move.price_unit)
+            document_txt = document_txt+ sl + campo_prilin
+            campo_taxlin = "%s|%s" % (
+                "TAXLIN",self.taxlin)
+            document_txt = document_txt+ sl + campo_taxlin
+            campo_alclin = "%s|%s|%s|%s|||" % (
+                "ALCLIN",self.alclin_cal,self.alclin_sec,self.alclin_tipo)
+            document_txt = document_txt+ sl + campo_alclin
 
 
         # =>Resumen
 
         campo_cntres = "%s|%s" % (
                 "CNTRES", "2")
-
-
         document_txt = document_txt+ sl + campo_cntres
+        campo_moares = "%s|%s|%s|%s" % (
+                "MOARES", self.moares_neto,self.moares_bruto,self.moares_base)
+        document_txt = document_txt+ sl + campo_moares
+        campo_taxres = "%s|%s||||" % (
+                "TAXRES", self.taxres_tipo)
+        document_txt = document_txt+ sl + campo_taxres
 
         # =>Fin Resumen
 
