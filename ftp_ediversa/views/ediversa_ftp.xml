@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="tree_ediversa_ftp">
+                 <field name="name">ediversa.ftp.tree</field>
+                 <field name="model">ediversa.ftp</field>
+                 <field name="type">tree</field>
+                 <field name="arch" type="xml">
+                     <tree string="Conexiones">
+                          <field name="name_ftp" />
+                          <field name="ruta_ftp" />
+                     </tree>
+                 </field>
+        </record>
+        <record model="ir.ui.view" id="ediversa_ftp_form">
+                <field name="name">ediversa.ftp.form</field>
+                <field name="model">ediversa.ftp</field>
+                <field name="type">form</field>
+                <field name="arch" type="xml">
+                    <form string="Conexion a realizar">
+
+                        <header>
+                        <button string="Probar Conexion" name="test"
+                            type="object" />
+                            <button string="Leer archivos" name="leer_archivos"
+                                type="object" />
+                        </header>
+                        <sheet>
+
+                            <group colspan="4">
+                                <field name="name_ftp" />
+                                <field name="ruta_ftp" />
+                                <field name="carpeta" />
+                                <field name="usuario_ftp" />
+                                <field name="contrasenia_ftp" />
+                            </group>
+
+                        </sheet>
+
+
+                 </form>
+             </field>
+            </record>
+
+        <record model="ir.actions.act_window"
+            id="act_ediversa_ftp">
+            <field name="name"> Conexion FTP</field>
+            <field name="res_model">ediversa.ftp</field>
+            <field name="view_mode">tree,form</field>
+            </record>
+
+
+            <menuitem id="id_principal_ftp"
+                name="FTP eDiversa" />
+
+            <menuitem id="id_menu_ftp" parent="id_principal_ftp"
+                name="Conexion" sequence="0" />
+
+            <menuitem id="id_menu_ftp_act" parent="id_menu_ftp"
+                name="FTP" action="act_ediversa_ftp"
+                sequence="0" />
+
+
+    </data>
+</openerp>
