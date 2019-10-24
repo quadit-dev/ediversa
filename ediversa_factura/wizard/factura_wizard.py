@@ -45,6 +45,10 @@ class export_factura_txt(models.Model):
                 'inv_numdoc':invoice.number,
                 'nadsco':invoice.user_id.codigo_provedor,
                 'nadsco_name':invoice.user_id.name,
+                'nadsco_domi':invoice.user_id.street,
+                'nadsco_pobla':invoice.user_id.city,
+                'nadsco_cp':invoice.user_id.zip,
+                'nadsco_nif':invoice.user_id.vat,
                 'nadbco':invoice.partner_id.codigo_provedor,
                 'nadbco_name':invoice.partner_id.name,
                 'nadbco_direc':invoice.partner_id.street,
@@ -53,8 +57,17 @@ class export_factura_txt(models.Model):
                 'nadbco_nif':invoice.partner_id.vat,
                 'nadsu_cod_prove':invoice.user_id.codigo_provedor,
                 'nadby_cod_cliente':invoice.partner_id.codigo_provedor,
+                'nadby_nombre':invoice.partner_id.name,
+                'nadby_domi':invoice.partner_id.street,
+                'nadby_pobla':invoice.partner_id.city,
+                'nadby_cp':invoice.partner_id.zip,
+                'nadby_nif':invoice.partner_id.vat,
                 'nadbii':invoice.user_id.codigo_provedor,
                 'nadbii_name':invoice.user_id.name,
+                'nadbii_domi':invoice.user_id.street,
+                'nadbii_pobla':invoice.user_id.city,
+                'nadbii_cp':invoice.user_id.zip,
+                'nadbii_nif':invoice.user_id.vat,
                 'nadms':invoice.partner_id.codigo_provedor,
                 'nadmr':invoice.user_id.codigo_provedor,
                 'nadpe':invoice.partner_id.codigo_provedor,
@@ -82,7 +95,7 @@ class export_factura_txt(models.Model):
         ('384', 'Factura Corregida'),
         ('385', 'Factura recapitulada'),
         ('389', 'Autofactura')],
-        'Tipo de documento')
+        'Tipo de documento', default="380")
     inv_funcion = fields.Selection([
         ('9', 'Original'),
         ('5', 'Sustitucion'),
@@ -90,7 +103,7 @@ class export_factura_txt(models.Model):
         ('43', 'Transmisión adcional'),
         ('31', 'Copia'),
         ('2', 'Adición (Complementaria)')],
-        'Función del mensaje')
+        'Función del mensaje', default="9")
 
     pai = fields.Selection([
         ('20', 'Cheque'),
@@ -98,7 +111,7 @@ class export_factura_txt(models.Model):
         ('60', 'Pagaré'),
         ('14E', 'Giro de banco'),
         ('10', 'En efectivo')],
-        'Instruccion de pago')
+        'Instruccion de pago',  default="20")
 
     ali = fields.Selection([
         ('1A', 'Devolución de la mercancía'),
@@ -120,6 +133,10 @@ class export_factura_txt(models.Model):
         default = lambda self: fields.datetime.now ())
     nadsco = fields.Char('codigo EDI emisor')
     nadsco_name = fields.Char('nombre emisor')
+    nadsco_domi = fields.Char('domicilio emisor')
+    nadsco_pobla = fields.Char('poblacion emisor')
+    nadsco_cp = fields.Char(' codigo postal emisor')
+    nadsco_nif = fields.Char('nif emisor')
     nadbco = fields.Char('codigo EDI receptor')
     nadbco_name = fields.Char('codigo EDI receptor')
     nadbco_direc = fields.Char('street')
@@ -128,8 +145,17 @@ class export_factura_txt(models.Model):
     nadbco_nif = fields.Char('nif')
     nadsu_cod_prove = fields.Char('codigo EDI Proveedor')
     nadby_cod_cliente = fields.Char('codigo EDI Cliente')
+    nadby_nombre = fields.Char('nombre Cliente')
+    nadby_domi = fields.Char('domicilio Cliente')
+    nadby_pobla = fields.Char('poblacion Cliente')
+    nadby_cp = fields.Char('codigo postal Cliente')
+    nadby_nif = fields.Char(' nif Cliente')
     nadbii = fields.Char('codigo EDI emisor de factura')
-    nadbii_name = fields.Char('codigo EDI emisor de factura nombre')
+    nadbii_name = fields.Char('nombre EDI emisor de factura nombre')
+    nadbii_domi = fields.Char('domicilio emisor de factura')
+    nadbii_pobla = fields.Char('poblacion emisor de factura')
+    nadbii_cp = fields.Char('codigo postal emisor de factura')
+    nadbii_nif = fields.Char('nif emisor de factura')
     nadiv = fields.Many2one('res.partner',string = 'Receptor de factura')
     naddp = fields.Many2one('res.partner',string = 'Receptor de mercancia')
     nadms = fields.Char('Codigo EDI del emisor del mensaje')
@@ -139,12 +165,12 @@ class export_factura_txt(models.Model):
     cux_coin = fields.Selection([
         ('EUR', 'Euro'),
         ('USD', 'Dolar')],
-        'Codigo de moneda', required=True)
+        'Codigo de moneda', required=True, default="EUR")
     cux_cali = fields.Selection([
         ('4', 'Divisa de la factura'),
         ('10', 'Divisa del precio'),
         ('11', 'Divisa del pago')],
-        'Calificador de la divisa', required=True)
+        'Calificador de la divisa', required=True, default="4")
 
     pat_cali = fields.Selection([
         ('1', 'Básico'),
@@ -306,7 +332,7 @@ class export_factura_txt(models.Model):
 
     @api.multi
     def export_txt_file(self,picking_ids):
-        print("_________________________-----",picking_ids)
+        print("______________-----",picking_ids)
         document_txt = ""
         #split de fecha creacion
         split_creacion = self.dtm_creacion.split('-')
@@ -358,8 +384,9 @@ class export_factura_txt(models.Model):
 
         document_txt = document_txt+ sl + campo_rff
 
-        campo_nadsco ="%s|%s|%s" % (
-                "NADSCO",self.nadsco,self.nadsco_name)
+        campo_nadsco ="%s|%s|%s||%s|%s|%s|%s|" % (
+                "NADSCO",self.nadsco,self.nadsco_name,self.nadsco_domi,
+                self.nadsco_pobla,self.nadsco_cp,self.nadsco_nif)
 
         document_txt = document_txt+ sl + campo_nadsco
 
@@ -369,24 +396,29 @@ class export_factura_txt(models.Model):
 
         document_txt = document_txt+ sl + campo_nadbco
 
-        campo_nadsu="%s|%s|%s" % (
-                "NADSU",self.nadsu_cod_prove,self.nadsco_name)
+        campo_nadsu="%s|%s|%s||%s|%s|%s|%s|" % (
+                "NADSU",self.nadsu_cod_prove,self.nadsco_name,self.nadsco_domi,
+                self.nadsco_pobla,self.nadsco_cp,self.nadsco_nif)
 
         document_txt = document_txt+ sl + campo_nadsu
 
-        campo_nadby="%s|%s|%s" % (
-                "NADBY",self.nadby_cod_cliente,self.nadbco_name)
+        campo_nadby="%s|%s|%s|%s|%s|%s|%s" % (
+                "NADBY",self.nadby_cod_cliente,self.nadby_nombre,
+                self.nadby_domi,self.nadby_pobla,self.nadby_cp,
+                self.nadby_nif)
 
         document_txt = document_txt+ sl + campo_nadby
 
-        campo_nadii="%s|%s|%s" % (
-                "NADII",self.nadbii, self.nadbii_name)
+        campo_nadii="%s|%s|%s|%s|%s|%s|%s|" % (
+                "NADII",self.nadbii, self.nadbii_name,self.nadbii_domi,
+                self.nadbii_pobla,self.nadbco_cp,self.nadbco_nif)
 
         document_txt = document_txt+ sl + campo_nadii
 
-        campo_nadiv="%s|%s|%s||||%s" % (
+        campo_nadiv="%s|%s|%s|%s|%s|%s|%s" % (
                 "NADIV",self.nadiv.codigo_provedor, self.nadiv.name,
-                self.nadiv.vat)
+                self.nadiv.street,self.nadiv.city,
+                self.nadiv.zip,self.nadiv.vat)
 
         document_txt = document_txt+ sl + campo_nadiv
 
@@ -395,9 +427,8 @@ class export_factura_txt(models.Model):
 
         document_txt = document_txt+ sl + campo_nadms
 
-        campo_nadmr="%s|%s|%s|||||%s" % (
-                "NADMR",self.nadiv.codigo_provedor, self.nadiv.name,
-                self.nadiv.vat)
+        campo_nadmr="%s|%s" % (
+                "NADMR",self.nadiv.codigo_provedor)
 
         document_txt = document_txt+ sl + campo_nadmr
 
@@ -408,14 +439,13 @@ class export_factura_txt(models.Model):
 
         document_txt = document_txt+ sl + campo_naddp
 
-        campo_nadpr  ="%s|%s|%s||||%s" % (
-                "NADPR",self.nadiv.codigo_provedor, self.nadiv.name,
-                self.nadiv.vat)
+        campo_nadpr  ="%s|%s" % (
+                "NADPR",self.nadiv.codigo_provedor)
 
         document_txt = document_txt+ sl + campo_nadpr
 
-        campo_nadpe  ="%s|%s|%s" % (
-                "NADPE",self.nadpe, self.nadpe_name)
+        campo_nadpe  ="%s|%s" % (
+                "NADPE",self.nadpe)
 
         document_txt = document_txt+ sl + campo_nadpe
 
