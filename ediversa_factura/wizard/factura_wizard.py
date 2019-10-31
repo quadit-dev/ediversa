@@ -20,7 +20,7 @@ sys.setdefaultencoding('utf8')
 class res_partner(models.Model):
     _name = 'res.partner'
     _inherit = 'res.partner'
-
+    registro_mer = fields.Char('Registro Mercantil')
 
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
@@ -49,6 +49,7 @@ class export_factura_txt(models.Model):
                 'nadsco_pobla':invoice.user_id.city,
                 'nadsco_cp':invoice.user_id.zip,
                 'nadsco_nif':invoice.user_id.vat,
+                'nadsco_rm':invoice.user_id.registro_mer,
                 'nadbco':invoice.partner_id.codigo_provedor,
                 'nadbco_name':invoice.partner_id.name,
                 'nadbco_direc':invoice.partner_id.street,
@@ -56,6 +57,7 @@ class export_factura_txt(models.Model):
                 'nadbco_cp':invoice.partner_id.zip,
                 'nadbco_nif':invoice.partner_id.vat,
                 'nadsu_cod_prove':invoice.user_id.codigo_provedor,
+                'nadsu_rm':invoice.user_id.registro_mer,
                 'nadby_cod_cliente':invoice.partner_id.codigo_provedor,
                 'nadby_nombre':invoice.partner_id.name,
                 'nadby_domi':invoice.partner_id.street,
@@ -75,6 +77,10 @@ class export_factura_txt(models.Model):
                 'moares_neto':invoice.amount_total,
                 'moares_bruto':invoice.amount_untaxed,
                 'moares_base':invoice.amount_total,
+                'moares_impuestos':invoice.amount_tax,
+                'taxres_neto':invoice.amount_total,
+                'taxres_impuestos':invoice.amount_tax,
+
                 })
 
         return res
@@ -134,6 +140,7 @@ class export_factura_txt(models.Model):
     nadsco = fields.Char('codigo EDI emisor')
     nadsco_name = fields.Char('nombre emisor')
     nadsco_domi = fields.Char('domicilio emisor')
+    nadsco_rm = fields.Char('registro mercantil')
     nadsco_pobla = fields.Char('poblacion emisor')
     nadsco_cp = fields.Char(' codigo postal emisor')
     nadsco_nif = fields.Char('nif emisor')
@@ -144,12 +151,14 @@ class export_factura_txt(models.Model):
     nadbco_cp = fields.Char('cp')
     nadbco_nif = fields.Char('nif')
     nadsu_cod_prove = fields.Char('codigo EDI Proveedor')
+    nadsu_rm = fields.Char('registro mercantil')
     nadby_cod_cliente = fields.Char('codigo EDI Cliente')
     nadby_nombre = fields.Char('nombre Cliente')
     nadby_domi = fields.Char('domicilio Cliente')
     nadby_pobla = fields.Char('poblacion Cliente')
     nadby_cp = fields.Char('codigo postal Cliente')
     nadby_nif = fields.Char(' nif Cliente')
+    nadby_sec = fields.Char('Sección o departamento del comprador que realiza la compra')  # noqa
     nadbii = fields.Char('codigo EDI emisor de factura')
     nadbii_name = fields.Char('nombre EDI emisor de factura nombre')
     nadbii_domi = fields.Char('domicilio emisor de factura')
@@ -237,15 +246,6 @@ class export_factura_txt(models.Model):
         ('TNE','Tonelada'),
         ('MTR','Metro')],
         'Especificador de la unidad de medida', required=True, default="PCE")
-    taxlin = fields.Selection([
-        ('VAT', 'IVA'),
-        ('IGI', 'IGIC'),
-        ('EXT', 'Exento de impuesto'),
-        ('ACT', 'Impuesto de alcoholes'),
-        ('RE', 'Recargo de equivalencia'),
-        ('ENV', 'Punto verde'),
-        ('RET', 'Retenciones por servicios profesionales')],
-        'Calificador de tipo de impuesto',required=True, default="VAT")
     alclin_cal = fields.Selection([
         ('A', 'Descuento'),
         ('C', 'Cargo'),
@@ -287,36 +287,10 @@ class export_factura_txt(models.Model):
     moares_base = fields.Float('Base imponible')
     moares_total = fields.Float('Importe total de la factura')
     moares_impuestos = fields.Float('Total de impuestos')
-    moares_descuentos = fields.Float('Total de descuentos globales')
-    moares_cargos = fields.Float('Total de cargos globales')
-    moares_debido = fields.Float('Importe total a pagar')
+    taxres_neto = fields.Float('Importe neto de la factura')
+    taxres_impuestos = fields.Float('Importe total de la factura')
 
-    taxres_porcentaje = fields.Float('Porcentaje del impuesto aplicar')
-    taxres_importe = fields.Float('Suma total de los importes del impuesto')
-    taxres_base = fields.Float('Importe monetario de la base imponible')
-    taxres_total = fields.Float('Importe del impuesto')
-    taxres_dis = fields.Float(
-        'Disposición nacional que da lugar a la exención del IVA')
-    taxres_categoria = fields.Selection([
-        ('E', 'Exento de impuestos'),
-        ('ES1', 'Se aplica el régimen especial del criterio de caja')],
-        'Categoría del impuesto')
-    taxres_tipo = fields.Selection([
-        ('VAT', 'IVA'),
-        ('IGI', 'IGIC'),
-        ('EXT', 'Exento de impuesto'),
-        ('ACT', 'Impuesto de alcoholes'),
-        ('RE', 'Recargo de equivalencia'),
-        ('ENV', 'Punto verde'),
-        ('RET', 'Retenciones por servicios profesionales'),
-        ('TA1', 'Harinas cárnicas'),
-        ('OTH', 'Otros impuestos'),
-        ('TA2', 'Residuos de aparatos electrónicos o eléctricos'),
-        ('TA3', 'Neumáticos fuera de uso'),
-        ('TA4', 'Aceites industriales usados'),
-        ('TA6', 'Reciclaje de pilas y acumuladores usados'),
-        ('TBT', 'Impuesto Labores de de Tabaco de Canarias')],
-        'Impuestos totales',required=True, default="VAT")
+
 
 
     file = fields.Binary('Layout')
@@ -332,7 +306,6 @@ class export_factura_txt(models.Model):
 
     @api.multi
     def export_txt_file(self,picking_ids):
-        print("______________-----",picking_ids)
         document_txt = ""
         #split de fecha creacion
         split_creacion = self.dtm_creacion.split('-')
@@ -384,9 +357,10 @@ class export_factura_txt(models.Model):
 
         document_txt = document_txt+ sl + campo_rff
 
-        campo_nadsco ="%s|%s|%s||%s|%s|%s|%s|" % (
-                "NADSCO",self.nadsco,self.nadsco_name,self.nadsco_domi,
-                self.nadsco_pobla,self.nadsco_cp,self.nadsco_nif)
+        campo_nadsco ="%s|%s|%s|%s|%s|%s|%s|%s|" % (
+                "NADSCO",self.nadsco,self.nadsco_name,self.nadsco_rm,
+                self.nadsco_domi,self.nadsco_pobla,
+                self.nadsco_cp,self.nadsco_nif)
 
         document_txt = document_txt+ sl + campo_nadsco
 
@@ -396,16 +370,17 @@ class export_factura_txt(models.Model):
 
         document_txt = document_txt+ sl + campo_nadbco
 
-        campo_nadsu="%s|%s|%s||%s|%s|%s|%s|" % (
-                "NADSU",self.nadsu_cod_prove,self.nadsco_name,self.nadsco_domi,
+        campo_nadsu="%s|%s|%s|%s|%s|%s|%s|%s|" % (
+                "NADSU",self.nadsu_cod_prove,self.nadsco_name,self.nadsu_rm,
+                self.nadsco_domi,
                 self.nadsco_pobla,self.nadsco_cp,self.nadsco_nif)
 
         document_txt = document_txt+ sl + campo_nadsu
 
-        campo_nadby="%s|%s|%s|%s|%s|%s|%s" % (
+        campo_nadby="%s|%s|%s|%s|%s|%s|%s|%s" % (
                 "NADBY",self.nadby_cod_cliente,self.nadby_nombre,
                 self.nadby_domi,self.nadby_pobla,self.nadby_cp,
-                self.nadby_nif)
+                self.nadby_nif,self.nadby_sec)
 
         document_txt = document_txt+ sl + campo_nadby
 
@@ -469,6 +444,7 @@ class export_factura_txt(models.Model):
 
         for move in self.env['account.invoice'].browse(
             picking_ids).invoice_line_ids:
+
             campo_lin = "%s|%s|%s|%s" % (
                 "LIN", move.product_id.barcode,self.lin_tipo_cod,"1")
             document_txt = document_txt+ sl + campo_lin
@@ -491,24 +467,27 @@ class export_factura_txt(models.Model):
             campo_prilin = "%s|%s|%s" % (
                 "PRILIN","AAB",move.price_unit)
             document_txt = document_txt+ sl + campo_prilin
-            campo_taxlin = "%s|%s" % (
-                "TAXLIN",self.taxlin)
+            campo_taxlin = "%s|%s|%s|%s" % (
+                "TAXLIN",move.invoice_line_tax_ids.calificador,
+                move.invoice_line_tax_ids.amount,move.price_subtotal)
             document_txt = document_txt+ sl + campo_taxlin
             campo_alclin = "%s|%s|%s|%s|||" % (
                 "ALCLIN",self.alclin_cal,self.alclin_sec,self.alclin_tipo)
             document_txt = document_txt+ sl + campo_alclin
 
-
+        print (self.taxres_tipo)
         # =>Resumen
-
         campo_cntres = "%s|%s" % (
                 "CNTRES", "2")
         document_txt = document_txt+ sl + campo_cntres
-        campo_moares = "%s|%s|%s|%s" % (
-                "MOARES", self.moares_neto,self.moares_bruto,self.moares_base)
+        campo_moares = "%s|%s|%s|%s|%s" % (
+                "MOARES", self.moares_neto,self.moares_bruto,self.moares_base,
+                self.moares_impuestos)
         document_txt = document_txt+ sl + campo_moares
-        campo_taxres = "%s|%s||||" % (
-                "TAXRES", self.taxres_tipo)
+        campo_taxres = "%s|%s|%s|%s|%s" % (
+                "TAXRES", "prueba",
+                "prueba",self.taxres_neto,
+                self.taxres_impuestos)
         document_txt = document_txt+ sl + campo_taxres
 
         # =>Fin Resumen
@@ -552,7 +531,6 @@ class export_factura_txt(models.Model):
         if self.type == 'txt':
             active_ids = self._context.get('active_ids', False)
             result = self.export_txt_file(active_ids)
-            print("ahahahahaha____------------->>>>>>>",result)
             return result
 
 

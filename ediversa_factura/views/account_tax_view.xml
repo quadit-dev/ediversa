@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+<data>
+    <record id="account_tax_calificador" model="ir.ui.view">
+            <field name="name">account.tax.calificador</field>
+            <field name="model">account.tax</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.view_tax_form"/>
+            <field name="arch" type="xml">
+                <group  position="inside">
+                    <group col="2">
+                    <field name="calificador"/>
+                    </group>
+                </group>
+            </field>
+    </record>
+</data>
+</openerp>

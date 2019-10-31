@@ -31,6 +31,7 @@
                     <field name="nadbco" required="1" readonly="1"/>
                     <field name="nadsu_cod_prove" required="1" readonly="1"/>
                     <field name="nadby_cod_cliente" required="1" readonly="1"/>
+                    <field name="nadby_sec" required="1"/>
                     <field name="nadiv" />
                     <field name="naddp" />
 
@@ -49,33 +50,13 @@
                        	<field name="pat_periodo" />
                        	<field name="pat_numero" />
                        	<field name="pat_entrega" />
-                       <!-- <field name="moares_bruto" required="1" />
-                       	<p>Seccion de Resumen</p>
-                       	<p></p>
-                       	<field name="moares_base" required="1" />
-                       	<field name="moares_total" required="1" />
-                       	<field name="moares_impuestos" required="1" />
-                       	<field name="moares_descuentos" required="1" />
-                       	<field name="moares_cargos" required="1" />
-                       	<field name="moares_debido" required="1" />
-                       	<p>Impuestos totales</p>
-                       	<p></p>
-
-                       	<field name="taxres_porcentaje" required="1" />
-                       	<field name="taxres_importe" required="1" />
-                       	<field name="taxres_base" required="1" />
-                       	<field name="taxres_total" required="1" />
-                       	<field name="taxres_dis" required="1" />
-                       	<field name="taxres_categoria" required="1" />-->
                         <field name="lin_tipo_cod" required="1" />
                         <field name="imdlin_cali_cod" required="1" />
                         <field name="qtylin_cal" required="1" />
                         <field name="qtylin_uni" required="1" />
-                        <field name="taxlin" required="1" />
                         <field name="alclin_cal" required="1" />
                         <field name="alclin_sec" required="1" />
                         <field name="alclin_tipo" required="1"/>
-                        <field name="taxres_tipo" required="1" />
                 	</group>
                 </sheet>
                  <sheet attrs="{'invisible':[('download_file','=',False)]}">

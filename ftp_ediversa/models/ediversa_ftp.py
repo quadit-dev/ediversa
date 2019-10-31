@@ -1,9 +1,10 @@
- #-*- coding: utf-8 -*-
+     #-*- coding: utf-8 -*-
 
 
 from openerp import _, api, fields, models
-
+import tempfile
 from ftplib import FTP
+from io import StringIO
 
 class ediversaFTP(models.Model):
     _name = 'ediversa.ftp'
@@ -37,12 +38,20 @@ class ediversaFTP(models.Model):
 
         fich = open("Prueba_serverFTP.txt","rb")
         conexion.storbinary("STOR Prueba_serverFTP.txt", fich)
-        conexion.retrlines("LIST")"""
-        #<<----->>
-        fich = open("Prueba_serverFTP.txt","wb")
-        conexion.retrbinary("RETR Prueba_serverFTP.txt", fich.write)
         conexion.retrlines("LIST")
+        #<<----->>"""
+        #fp = tempfile.TemporaryFile()
+        r = StringIO()
+        #fich = open("Prueba_serverFTP.txt","wb")
+        #fich = BytesIO(FtpFile(conexion, "Prueba_serverFTP.txt").read(10240))
+        conexion.retrbinary('RETR Prueba_serverFTP.txt', r.write)
+        info = r.getvalue().decode()
+        splits = info.split('|')
 
+        tickers = [x for x in splits if 'N\r\n' in x]
+        tickers = [x.strip('N\r\n') for x in tickers]
+        print ("-------------------------",info.read())
+        conexion.retrlines("LIST")
 
 
         return conexion

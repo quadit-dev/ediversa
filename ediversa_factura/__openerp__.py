@@ -14,6 +14,9 @@
     'website': 'https://www.quadit.mx',
     'data': [
         'views/factura_ediversa.xml',
+        'views/res_partner_view.xml',
+        'views/account_tax_view.xml',
+        'views/account_invoice_view.xml',
         'wizard/factura_wizard.xml',
     ],
     'demo': [],

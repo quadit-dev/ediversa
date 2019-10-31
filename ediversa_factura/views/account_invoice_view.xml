@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+<data>
+    <record id="account_invoice_impuesto" model="ir.ui.view">
+            <field name="name">account.invoice.impuesto</field>
+            <field name="model">account.invoice</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <group  position="inside">
+                    <group col="2">
+                    <field name="taxres_tipo" />
+                    </group>
+                </group>
+            </field>
+    </record>
+</data>
+</openerp>
