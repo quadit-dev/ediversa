@@ -43,6 +43,7 @@ class export_factura_txt(models.Model):
 
         res.update({
                 'inv_numdoc':invoice.number,
+                'rff_referencia':invoice.origin,
                 'nadsco':invoice.user_id.codigo_provedor,
                 'nadsco_name':invoice.user_id.name,
                 'nadsco_domi':invoice.user_id.street,
@@ -292,7 +293,6 @@ class export_factura_txt(models.Model):
 
 
 
-
     file = fields.Binary('Layout')
     download_file = fields.Boolean('Descargar Archivo')
     cadena_decoding = fields.Text('Binario sin encoding')
@@ -471,11 +471,13 @@ class export_factura_txt(models.Model):
                 "TAXLIN",move.invoice_line_tax_ids.calificador,
                 move.invoice_line_tax_ids.amount,move.price_subtotal)
             document_txt = document_txt+ sl + campo_taxlin
-            campo_alclin = "%s|%s|%s|%s|||" % (
-                "ALCLIN",self.alclin_cal,self.alclin_sec,self.alclin_tipo)
+            des = move.price_unit - move.price_subtotal
+            campo_alclin = "%s|%s|%s|%s||%s|%s" % (
+                "ALCLIN",self.alclin_cal,self.alclin_sec,self.alclin_tipo,
+                move.discount,des)
             document_txt = document_txt+ sl + campo_alclin
 
-        print (self.taxres_tipo)
+
         # =>Resumen
         campo_cntres = "%s|%s" % (
                 "CNTRES", "2")
@@ -484,11 +486,15 @@ class export_factura_txt(models.Model):
                 "MOARES", self.moares_neto,self.moares_bruto,self.moares_base,
                 self.moares_impuestos)
         document_txt = document_txt+ sl + campo_moares
-        campo_taxres = "%s|%s|%s|%s|%s" % (
-                "TAXRES", "prueba",
-                "prueba",self.taxres_neto,
-                self.taxres_impuestos)
-        document_txt = document_txt+ sl + campo_taxres
+
+        for tax in self.env['account.invoice'].browse(
+            picking_ids).tax_line_ids:
+            objtax = self.env['account.tax'].search([('name','=',tax.name)])
+            campo_taxres = "%s|%s|%s|%s|%s" % (
+                "TAXRES", objtax.calificador,objtax.amount,
+                self.taxres_neto, self.taxres_impuestos)
+            document_txt = document_txt+ sl + campo_taxres
+
 
         # =>Fin Resumen
 

@@ -25,7 +25,7 @@
                 		<field name = "pai" />
                 		<field name = "ali" />
                 		<field name="rff_cali" required="1"/>
-                		<field name="rff_referencia" required="1"/>
+                		<field name="rff_referencia" required="1" readonly="1" />
                 		<field name="rff_fecha" required="1"/>
                     <field name="nadsco" required="1" readonly="1"/>
                     <field name="nadbco" required="1" readonly="1"/>
