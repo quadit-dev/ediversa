@@ -151,7 +151,7 @@ class export_albaran_txt(models.Model):
                 'naddp_cod_entrega': code_ddp,
                 'nadby_cod_cliente': code_dby,
                 'dtm_entrega':picking.min_date,
-                'rff_referencia':picking.order_reference,
+                'rff_referencia':picking.origin,
                 'rff_fecha':picking.sale_id.date_order,
                 'nadms_cod_emisor_mens':picking.company_id.partner_id.codigo_provedor,  # noqa
                 'nadmr_cod_emisor_mens':picking.partner_id.codigo_provedor,
@@ -323,7 +323,7 @@ class export_albaran_txt(models.Model):
                 campo_rff = "%s|%s" % (
                 "RFF", self.rff_cali)"""
             campo_rff = "%s|%s|%s|%s" % (
-                "RFF", self.rff_cali, picking.order_reference, date_referencia)
+                "RFF", self.rff_cali, self.rff_referencia, date_referencia)
 
             campo_nadms = "%s|%s" % (
                 "NADMS", picking.company_id.partner_id.codigo_provedor)
