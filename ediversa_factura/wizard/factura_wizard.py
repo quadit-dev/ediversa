@@ -127,13 +127,13 @@ class export_factura_txt(models.Model):
         ('78E', 'Devolucion de la mercancia'),
         ('79E', 'Discrepancias o ajustes'),
         ('80E', 'Bonificaciones anuales (Rappel)')],
-        'Condiciones especiales')
+        'Condiciones especiales', default="1A")
 
     rff_cali = fields.Selection([
         ('DQ', 'Numero de albaran en papel'),
         ('ON', 'Numero de pedido'),
         ('AAN', 'Numero de planificacion de entregas')],
-        'Referencias', required=True)
+        'Referencias', required=True, default="DQ")
     rff_referencia = fields.Char('Referencia del documento')
     rff_fecha = fields.Datetime ('Fecha referencia',
         readonly = False, select = True,
@@ -471,7 +471,8 @@ class export_factura_txt(models.Model):
                 "TAXLIN",move.invoice_line_tax_ids.calificador,
                 move.invoice_line_tax_ids.amount,move.price_subtotal)
             document_txt = document_txt+ sl + campo_taxlin
-            des = move.price_unit - move.price_subtotal
+            descuento_p = move.discount/100
+            des = move.price_unit * descuento_p
             campo_alclin = "%s|%s|%s|%s||%s|%s" % (
                 "ALCLIN",self.alclin_cal,self.alclin_sec,self.alclin_tipo,
                 move.discount,des)
