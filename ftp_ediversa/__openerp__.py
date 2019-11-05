@@ -7,7 +7,8 @@
         'mail',
         'sale',
         'purchase',
-        'account'
+        'account',
+        'sh_message'
     ],
     'author': 'Quadit, S.A. de C.V.',
     'description': 'eDiversa FTP',

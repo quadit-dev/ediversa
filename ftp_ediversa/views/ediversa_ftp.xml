@@ -1,6 +1,22 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
+        <record id="ediversa_message_wizard" model="ir.ui.view">
+                  <field name="name">sh.message.wizard.wizard</field>
+                  <field name="model">sh.message.wizard</field>
+                  <field name="arch" type="xml">
+                    <form string="Message">
+                      <field name="name"/>
+
+                      <footer>
+                        <button string="OK" class="btn-primary" special="cancel" />
+                      </footer>
+
+
+                    </form>
+                  </field>
+        </record>
+
         <record model="ir.ui.view" id="tree_ediversa_ftp">
                  <field name="name">ediversa.ftp.tree</field>
                  <field name="model">ediversa.ftp</field>
@@ -20,10 +36,11 @@
                     <form string="Conexion a realizar">
 
                         <header>
-                        <button string="Probar Conexion" name="test"
+                        <button string="Probar Conexion" name="conectar"
                             type="object" />
-                            <button string="Leer archivos" name="leer_archivos"
-                                type="object" />
+                        <button string="Archivos" name="archivos"
+                            type="object" />
+
                         </header>
                         <sheet>
 
@@ -32,7 +49,7 @@
                                 <field name="ruta_ftp" />
                                 <field name="carpeta" />
                                 <field name="usuario_ftp" />
-                                <field name="contrasenia_ftp" />
+                                <field name="contrasenia_ftp" password="True"  />
                             </group>
 
                         </sheet>

@@ -1,10 +1,24 @@
 #-*- coding: utf-8 -*-
 
 
-from openerp import _, api, fields, models
+from openerp import _, api, fields, models, exceptions
 import tempfile
 from ftplib import FTP
-from io import StringIO
+from StringIO import StringIO
+
+
+class sh_message_wizard(models.TransientModel):
+    _name="sh.message.wizard"
+    def get_default(self):
+        if self.env.context.get("message",False):
+            return self.env.context.get("message")
+        return False
+
+
+    name=fields.Text(string="Message",readonly=True,default=get_default)
+
+
+
 
 class ediversaFTP(models.Model):
     _name = 'ediversa.ftp'
@@ -16,11 +30,8 @@ class ediversaFTP(models.Model):
     usuario_ftp = fields.Char('Usuario FTP', required=True)
     contrasenia_ftp = fields.Char('Contraseña FTP',required=True)
 
-
     @api.multi
     def test(self):
-        print("PROBANDO METODOO -------------------------->>>>>>>>>>",
-            self.name_ftp)
         server = self.ruta_ftp
         user = self.usuario_ftp
         passw = self.contrasenia_ftp
@@ -29,32 +40,70 @@ class ediversaFTP(models.Model):
             conexion.login(user,passw)
             print "[+] Conexion establecida correctamente"
         except Exception,e:
+            raise Warning('[-] No se pudo establecerla conexion al servidor' + str(e))
             print "[-] No se pudo establecerla conexion al servidor" + str(e)
-
-        #Crear y subir un archivo por FTP
-        fichero = open("Prueba_serverFTP2.txt","w")
-        fichero.writelines("Esta es una prueba de la conexion a un servidor FTP")
-        fichero.close()
-
-        fichero = open("Prueba_serverFTP2.txt","rb")
-        conexion.storbinary("STOR Prueba_serverFTP2.txt", fichero)
-        conexion.retrlines("LIST")
-        #<<----->>
-        #fp = tempfile.TemporaryFile()
-        file = open('Prueba_serverFTP3.txt', 'wb')
-        conexion.retrbinary('RETR %s' % 'Prueba_serverFTP2.txt', file.write)
-        file.close()
-        file = open('Prueba_serverFTP3.txt', 'r')
-        print(file.read())
-        file.close
-
         return conexion
 
-""" Tarea para mañana:
-Separar los metodos conexion, subir archivo y descargar
-por el momento solo contare 3 metodos
-primero modificar el modulo de orders el cual crea una orden
-por lo tanto debere crear un metodo que descargue el archivo
-y sea capaz de cargarlo desde el widzard y no por el adjunto."""
+    @api.multi
+    def archivos(self):
+        documentos = ""
+        sl = "\n"
+        conexion = self.test()
+        if conexion:
+            #conexion.dir()
+            data=[]
+            res={}
+            conexion.dir(data.append)
+            for f in data:
+                if f.endswith('txt'):
+                    ff= f.split(" ")[-1]
+                    documentos = documentos + ff + '\n'
+            view = self.env.ref('ftp_ediversa.ediversa_message_wizard')
+            context =dict(self._context)
+            context['message'] = "[+] Conexion establecida correctamente" +'\n'+ documentos
+
+        return {
+            'name': 'Archivos',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'sh.message.wizard',
+            'views': [(view.id,'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'context': context,
+        }
+
+
+    @api.multi
+    def conectar(self):
+        conexion = self.test()
+        if conexion:
+            view = self.env.ref('ftp_ediversa.ediversa_message_wizard')
+            context =dict(self._context)
+            context['message'] = "[+] Conexion establecida correctamente"
+
+        return {
+            'name': 'Successfull',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'sh.message.wizard',
+            'views': [(view.id,'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'context': context,
+        }
+
+
+    @api.constrains('name_ftp')
+    def _check_id(self):
+        print "==============>dentro del contrains"
+        current_id  = self.search([('id','!=', self.id)])
+        if current_id:
+            raise exceptions.ValidationError("Solo puede haber un registro")
+
+
+
 
 
