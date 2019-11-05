@@ -1,4 +1,4 @@
-     #-*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
 
 
 from openerp import _, api, fields, models
@@ -32,28 +32,29 @@ class ediversaFTP(models.Model):
             print "[-] No se pudo establecerla conexion al servidor" + str(e)
 
         #Crear y subir un archivo por FTP
-        """fichero = open("Prueba_serverFTP.txt","w")
+        fichero = open("Prueba_serverFTP2.txt","w")
         fichero.writelines("Esta es una prueba de la conexion a un servidor FTP")
         fichero.close()
 
-        fich = open("Prueba_serverFTP.txt","rb")
-        conexion.storbinary("STOR Prueba_serverFTP.txt", fich)
+        fichero = open("Prueba_serverFTP2.txt","rb")
+        conexion.storbinary("STOR Prueba_serverFTP2.txt", fichero)
         conexion.retrlines("LIST")
-        #<<----->>"""
+        #<<----->>
         #fp = tempfile.TemporaryFile()
-        r = StringIO()
-        #fich = open("Prueba_serverFTP.txt","wb")
-        #fich = BytesIO(FtpFile(conexion, "Prueba_serverFTP.txt").read(10240))
-        conexion.retrbinary('RETR Prueba_serverFTP.txt', r.write)
-        info = r.getvalue().decode()
-        splits = info.split('|')
-
-        tickers = [x for x in splits if 'N\r\n' in x]
-        tickers = [x.strip('N\r\n') for x in tickers]
-        print ("-------------------------",info.read())
-        conexion.retrlines("LIST")
-
+        file = open('Prueba_serverFTP3.txt', 'wb')
+        conexion.retrbinary('RETR %s' % 'Prueba_serverFTP2.txt', file.write)
+        file.close()
+        file = open('Prueba_serverFTP3.txt', 'r')
+        print(file.read())
+        file.close
 
         return conexion
+
+""" Tarea para mañana:
+Separar los metodos conexion, subir archivo y descargar
+por el momento solo contare 3 metodos
+primero modificar el modulo de orders el cual crea una orden
+por lo tanto debere crear un metodo que descargue el archivo
+y sea capaz de cargarlo desde el widzard y no por el adjunto."""
 
 

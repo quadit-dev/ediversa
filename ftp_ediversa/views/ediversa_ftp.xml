@@ -53,7 +53,7 @@
             <menuitem id="id_principal_ftp"
                 name="FTP eDiversa" />
 
-            <menuitem id="id_menu_ftp" parent="id_principal_ftp"
+            <menuitem id="id_menu_ftp" parent="base.menu_sale_config"
                 name="Conexion" sequence="0" />
 
             <menuitem id="id_menu_ftp_act" parent="id_menu_ftp"
