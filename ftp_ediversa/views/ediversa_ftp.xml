@@ -40,6 +40,8 @@
                             type="object" />
                         <button string="Archivos" name="archivos"
                             type="object" />
+                        <button string="Mover archivos" name="mover_de_carpeta"
+                            type="object" />
 
                         </header>
                         <sheet>
@@ -49,7 +51,7 @@
                                 <field name="ruta_ftp" />
                                 <field name="carpeta" />
                                 <field name="usuario_ftp" />
-                                <field name="contrasenia_ftp" password="True"  />
+                                <field name="contrasenia_ftp" />
                             </group>
 
                         </sheet>

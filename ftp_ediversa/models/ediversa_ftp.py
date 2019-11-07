@@ -5,6 +5,13 @@ from openerp import _, api, fields, models, exceptions
 import tempfile
 from ftplib import FTP
 from StringIO import StringIO
+import os
+import datetime
+import time
+import shutil
+import sys
+import errno
+import re
 
 
 class sh_message_wizard(models.TransientModel):
@@ -26,10 +33,13 @@ class ediversaFTP(models.Model):
 
     name_ftp = fields.Char('Nombre del FTP',required=True)
     ruta_ftp = fields.Char('Ruta del FTP',required=True)
-    carpeta = fields.Char('Carpta FTP', required=True)
+    carpeta = fields.Char('Carpeta FTP', required=True)
     usuario_ftp = fields.Char('Usuario FTP', required=True)
     contrasenia_ftp = fields.Char('Contraseña FTP',required=True)
 
+
+    #Devuelve una conexion de FTP con los datos ingresados por el usuario en la
+    #configuracion del sistema
     @api.multi
     def test(self):
         server = self.ruta_ftp
@@ -38,43 +48,62 @@ class ediversaFTP(models.Model):
         try:
             conexion = FTP(server)
             conexion.login(user,passw)
+            conexion.dir()
             print "[+] Conexion establecida correctamente"
         except Exception,e:
             raise Warning('[-] No se pudo establecerla conexion al servidor' + str(e))
             print "[-] No se pudo establecerla conexion al servidor" + str(e)
         return conexion
 
+    #Este metodo se encarga de devolver los nombres de
+    #los archivos de la carpeta donde se encuentra
     @api.multi
     def archivos(self):
-        documentos = ""
-        sl = "\n"
+        documentos = ''
+        sl = '\n'
         conexion = self.test()
+        conexion.cwd(self.carpeta)
         if conexion:
-            #conexion.dir()
             data=[]
             res={}
             conexion.dir(data.append)
+            doc = open('archivos.txt','w')
             for f in data:
                 if f.endswith('txt'):
                     ff= f.split(" ")[-1]
-                    documentos = documentos + ff + '\n'
-            view = self.env.ref('ftp_ediversa.ediversa_message_wizard')
-            context =dict(self._context)
-            context['message'] = "[+] Conexion establecida correctamente" +'\n'+ documentos
+                    documentos = documentos + ff + sl
 
-        return {
-            'name': 'Archivos',
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'sh.message.wizard',
-            'views': [(view.id,'form')],
-            'view_id': view.id,
-            'target': 'new',
-            'context': context,
-        }
+            doc.writelines(documentos)
+            doc.close()
+        conexion.close()
+        return doc
 
+    @api.multi
+    def mover_de_carpeta(self):
+        conexion = self.test()
+        doc = self.archivos()
+        conexion.cwd(self.carpeta)
+        conexion.dir()
+        st=""
+        if conexion:
+            doc = open('archivos.txt','r')
+            for linea in doc.readlines():
+                st = linea
+                file = open(st, 'wb')
+                conexion.retrbinary('RETR %s' % st, file.write)
+                file.close()
+                conexion.cwd('/')
+                conexion.cwd('Records')
+                file = open(st,"rb")
+                conexion.storbinary("STOR "+st, file)
+                conexion.retrlines("LIST")
+                conexion.cwd('/')
+                conexion.cwd(self.carpeta)
 
+        conexion.close()
+        return conexion
+
+    #Devuelve un mensaje si la conexion a sido exitosa
     @api.multi
     def conectar(self):
         conexion = self.test()
@@ -82,7 +111,7 @@ class ediversaFTP(models.Model):
             view = self.env.ref('ftp_ediversa.ediversa_message_wizard')
             context =dict(self._context)
             context['message'] = "[+] Conexion establecida correctamente"
-
+        conexion.close()
         return {
             'name': 'Successfull',
             'type': 'ir.actions.act_window',
@@ -95,7 +124,7 @@ class ediversaFTP(models.Model):
             'context': context,
         }
 
-
+    #Condicion que solo permite tener un solo registro dentro de FTP
     @api.constrains('name_ftp')
     def _check_id(self):
         print "==============>dentro del contrains"
