@@ -42,6 +42,8 @@
                             type="object" />
                         <button string="Mover archivos" name="mover_de_carpeta"
                             type="object" />
+                        <button string="Renombrar" name="cambiar_nombre"
+                            type="object" />
 
                         </header>
                         <sheet>
