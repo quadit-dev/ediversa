@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<openerp>
+    <data noupdate="1">
+
+    <record forcecreate="True" id="revision_due_invoices_v1" model="ir.cron">
+           <field name="name">Generar orden </field>
+           <field eval="True" name="active" />
+           <field name="user_id" ref="base.user_root" />
+           <field name="interval_number">24</field>
+           <field name="interval_type">hours</field>
+           <field name="numbercall">-1</field>
+            <field name="doall">1</field>
+           <field ref="model_ediversa_order" name="model_id" />
+            <field name="state">code</field>
+            <field name="model">ediversa.order</field>
+            <field name="function" eval="'generar_orden'"/>
+
+           <field name="args">()</field>
+
+        </record>
+
+
+</data>
+</openerp>
