@@ -8,8 +8,6 @@ from pprint import pprint
 _logger = logging.getLogger(__name__)
 
 
-
-
 class supplier(models.Model):
     _name = 'res.partner'
     _inherit = ['res.partner']
@@ -18,12 +16,13 @@ class supplier(models.Model):
     # codigo_dir_fact = fields.Char('Código Facturacion')
     # codigo_dir_entrega = fields.Char('Código Dirección entrega')
 
+
 class product_exi(models.Model):
     _name = 'sale.order'
     _inherit = ['sale.order']
 
     product_exist = fields.Text(string='Default Terms and Conditions',
-        translate=True)
+                                translate=True)
 
 
 class ediversaOrder(models.Model):
@@ -190,11 +189,13 @@ class ediversaOrder(models.Model):
                         else:
                             False
                         if vals["ali_info_pedido"] == '61E':
-                            _logger.info("pedidos agrupados de palets de cross-Dock")
+                            _logger.info(
+                                "pedidos agrupados de palets de cross-Dock")
                         else:
                             False
                         if vals["ali_info_pedido"] == 'x1':
-                            _logger.info("si envio parcial-cancelacion del resto")
+                            _logger.info(
+                                "si envio parcial-cancelacion del resto")
                         else:
                             False
                         if vals["ali_info_pedido"] == 'x2':
@@ -202,11 +203,13 @@ class ediversaOrder(models.Model):
                         else:
                             False
                         if vals["ali_info_pedido"] == 'x41':
-                            _logger.info("reserva realizada por el consumidor final")
+                            _logger.info(
+                                "reserva realizada por el consumidor final")
                         else:
                             False
                         if vals["ali_info_pedido"] == 'x42':
-                            _logger.info("mercancia de reaprovisionamiento a tienda")
+                            _logger.info(
+                                "mercancia de reaprovisionamiento a tienda")
                         else:
                             False
                         if vals["ali_info_pedido"] == 'x43':
@@ -281,7 +284,7 @@ class ediversaOrder(models.Model):
                     if item[0] == 'NADMS':
                         if not len(item) == 1:
                             Warning(('Please fixing manual'))
-                        xline=[{
+                        xline = [{
                             'nadms_punto_oper_emisor_men': item[1],
                             'nadms_nombre': item[2] if len(item) >= 3 else False,
                             'nadms_direccion': item[3] if len(item) >= 4 else False,
@@ -293,10 +296,11 @@ class ediversaOrder(models.Model):
                         for f in nadms:
                             for p in f:
                                 if p['nadms_punto_oper_emisor_men'] != '0':
-                                    _logger.info("#######################codigo interno del cliente")
+                                    _logger.info(
+                                        "#######################codigo interno del cliente")
                                 else:
                                     False
-                        vals.update({'nadms_row':nadms})
+                        vals.update({'nadms_row': nadms})
 
                     if item[0] == 'NADMR':
                         if not len(item) == 1:
@@ -307,7 +311,7 @@ class ediversaOrder(models.Model):
                     if item[0] == 'NADSU':
                         if not len(item) == 1:
                             Warning(('Please fixing manual'))
-                        xline=[{
+                        xline = [{
                             'nadsu_punto_oper_proveedor': item[1],
                             'nadsu_cod_interno_proveedor': item[2] if len(item) >= 3 else False,
                             'nadsu_cod_interno_proveedor1': item[3] if len(item) >= 4 else False,
@@ -316,10 +320,11 @@ class ediversaOrder(models.Model):
                         for f in nadsu:
                             for p in f:
                                 if p["nadsu_punto_oper_proveedor"] != '0':
-                                    _logger.info("#########################codigo interno del proveedor")
+                                    _logger.info(
+                                        "#########################codigo interno del proveedor")
                                 else:
                                     False
-                        vals.update({'nadsu_row':nadsu})
+                        vals.update({'nadsu_row': nadsu})
 
                     if item[0] == 'NADBY':
                         if not len(item) == 1:
@@ -338,7 +343,7 @@ class ediversaOrder(models.Model):
                     if item[0] == 'NADDP':
                         if not len(item) == 1:
                             Warning(('Please fixing manual'))
-                        xline=[{
+                        xline = [{
                             'naddp_punto_entrega': item[1],
                             'naddp_puerta_entrega_mercancia': item[2] if len(item) >= 3 else False,
                             'naddp_nombre': item[3] if len(item) >= 4 else False,
@@ -350,10 +355,11 @@ class ediversaOrder(models.Model):
                         for f in naddp:
                             for p in f:
                                 if p["naddp_punto_entrega"] != '0':
-                                    _logger.info("############################ direccion de entrega")
+                                    _logger.info(
+                                        "############################ direccion de entrega")
                                 else:
                                     False
-                        vals.update({'naddp_row':naddp})
+                        vals.update({'naddp_row': naddp})
 
                     if item[0] == 'NADIV':
                         if not len(item) == 1:
@@ -371,12 +377,11 @@ class ediversaOrder(models.Model):
                         for f in nadiv:
                             for p in f:
                                 if p["nadiv_punto_oper_fac"] != '0':
-                                    _logger.info("############################ direccion de la factura")
+                                    _logger.info(
+                                        "############################ direccion de la factura")
                                 else:
                                     False
-                        vals.update({'nadiv_row':nadiv})
-
-
+                        vals.update({'nadiv_row': nadiv})
 
                     if item[0] == 'NADPR':
                         if not len(item) == 1:
@@ -397,21 +402,20 @@ class ediversaOrder(models.Model):
                             'nadud_provincia': item[8] if len(item) >= 9 else False,
                         })
 
-
-
                     if item[0] == 'TAX':
                         if not len(item) == 1:
                             Warning(('Please fixing manual'))
-                        xline=[{
+                        xline = [{
                             'tax_tipo_impuesto': item[1],
                             'tax_porcentaje_impuesto': item[2] if len(item) >= 3 else False,
                             'tax_importe_impuesto': item[3] if len(item) >= 4 else False,
                         }]
                         tax.append(xline)
                         for f in tax:
-                            print ("###################################f de tax",f)
+                            print("###################################f de tax", f)
                             for p in f:
-                                print("#################################p de tax",p)
+                                print(
+                                    "#################################p de tax", p)
                             if p["tax_porcentaje_impuesto"] != '0':
                                 _logger.info("porcentaje")
                             else:
@@ -427,8 +431,6 @@ class ediversaOrder(models.Model):
                                 else:
                                     False
                         vals.update({'tax_row': tax})
-
-
 
                     if item[0] == 'CUX':
                         if not len(item) == 1:
@@ -446,7 +448,6 @@ class ediversaOrder(models.Model):
                             _logger.info("dolar")
                         else:
                             False
-
 
                     if item[0] == 'PAT':
                         if not len(item) == 1:
@@ -526,7 +527,8 @@ class ediversaOrder(models.Model):
                         else:
                             False
                         if vals["tod_condiciones_entrega"] == 'DAF':
-                            _logger.info("entrega en la frontera lugar indicado")
+                            _logger.info(
+                                "entrega en la frontera lugar indicado")
                         else:
                             False
                         if vals["tod_condiciones_entrega"] == 'EXW':
@@ -534,7 +536,8 @@ class ediversaOrder(models.Model):
                         else:
                             False
                         if vals["tod_condiciones_entrega"] == 'FCA':
-                            _logger.info("franco en el trasporte-punto indicado")
+                            _logger.info(
+                                "franco en el trasporte-punto indicado")
                         else:
                             False
                         if vals["tod_condiciones_entrega"] == 'RYF':
@@ -563,7 +566,8 @@ class ediversaOrder(models.Model):
                         else:
                             False
                         if vals["tod_condiciones_entrega"] == 'DDP':
-                            _logger.info("entregado con aranceles pagados hasta destino")
+                            _logger.info(
+                                "entregado con aranceles pagados hasta destino")
                         else:
                             False
                         if vals["tod_condiciones_entrega"] == 'DDU':
@@ -585,11 +589,13 @@ class ediversaOrder(models.Model):
                         else:
                             False
                         if vals["tod_condiciones_entrega"] == 'FOA':
-                            _logger.info("aereopurto- nombres dek aereopuerto de salida")
+                            _logger.info(
+                                "aereopurto- nombres dek aereopuerto de salida")
                         else:
                             False
                         if vals["tod_condiciones_entrega"] == 'FOB':
-                            _logger.info("free on board nombre del puerto del embarque")
+                            _logger.info(
+                                "free on board nombre del puerto del embarque")
                         else:
                             False
                         if vals["tod_condiciones_entrega"] == 'FOR':
@@ -614,31 +620,38 @@ class ediversaOrder(models.Model):
                         else:
                             False
                         if vals["tod_condiciones_entrega"] == 'EP':
-                            _logger.info("metodo de pago. en este caso es cuando se especifica el siguiete campo(portes)")
+                            _logger.info(
+                                "metodo de pago. en este caso es cuando se especifica el siguiete campo(portes)")
                         else:
                             False
                         if vals["tod_responsable_trasporte"] == 'PP':
-                            _logger.info("transporte a cargo del proveedor(portes pagados)")
+                            _logger.info(
+                                "transporte a cargo del proveedor(portes pagados)")
                         else:
                             False
                         if vals["tod_responsable_trasporte"] == 'X1E':
-                            _logger.info("transporte a cargo del proveedor(portes pagados)")
+                            _logger.info(
+                                "transporte a cargo del proveedor(portes pagados)")
                         else:
                             False
                         if vals["tod_responsable_trasporte"] == 'PU':
-                            _logger.info("transporte a cargo del comprador(portes debidos)")
+                            _logger.info(
+                                "transporte a cargo del comprador(portes debidos)")
                         else:
                             False
                         if vals["tod_responsable_trasporte"] == 'PD':
-                            _logger.info("transporte a cargo del comprador(portes debidos)")
+                            _logger.info(
+                                "transporte a cargo del comprador(portes debidos)")
                         else:
                             False
                         if vals["tod_responsable_trasporte"] == 'CC':
-                            _logger.info("transporte a cargo del comprador(portes debidos)")
+                            _logger.info(
+                                "transporte a cargo del comprador(portes debidos)")
                         else:
                             False
                         if vals["tod_responsable_trasporte"] == 'X2E':
-                            _logger.info("transporte a cargo del comprador(portes debidos)")
+                            _logger.info(
+                                "transporte a cargo del comprador(portes debidos)")
                         else:
                             False
                         if vals["tod_responsable_trasporte"] == '4':
@@ -767,20 +780,23 @@ class ediversaOrder(models.Model):
                         pialin.append(xline)
                         for f in pialin:
                             for p in f:
-                                _logger.info ("########################p",p)
-                            _logger.info ("########################f",f)
+                                _logger.info("########################p", p)
+                            _logger.info("########################f", f)
                             if p["pialin_ref_articulo"] != '0':
                                 _logger.info("codigo interno del articulo")
                             else:
                                 False
-                                _logger.info ("########################pialin_ref_articulo", f["pialin_ref_articulo"])
+                                _logger.info(
+                                    "########################pialin_ref_articulo", f["pialin_ref_articulo"])
                             if p.has_key('pialin_calificador'):
                                 if p["pialin_calificador"] == 'SA':
-                                    _logger.info("codigo interno del articulopor el proveedor")
+                                    _logger.info(
+                                        "codigo interno del articulopor el proveedor")
                                 else:
                                     False
                                 if p["pialin_calificador"] == 'IN':
-                                    _logger.info("codigo interno del comprador")
+                                    _logger.info(
+                                        "codigo interno del comprador")
                                 else:
                                     False
                                 if p["pialin_calificador"] == 'SN':
@@ -788,15 +804,18 @@ class ediversaOrder(models.Model):
                                 else:
                                     False
                                 if p["pialin_calificador"] == 'ADU':
-                                    _logger.info("codigo de la unidad del embalaje")
+                                    _logger.info(
+                                        "codigo de la unidad del embalaje")
                                 else:
                                     False
                                 if p["pialin_calificador"] == 'MN':
-                                    _logger.info("identificacion del modelo del fabricante")
+                                    _logger.info(
+                                        "identificacion del modelo del fabricante")
                                 else:
                                     False
                                 if p["pialin_calificador"] == 'DW':
-                                    _logger.info("identificacion interna del provedor del dibujo")
+                                    _logger.info(
+                                        "identificacion interna del provedor del dibujo")
                                 else:
                                     False
                                 if p["pialin_calificador"] == 'PV':
@@ -804,11 +823,13 @@ class ediversaOrder(models.Model):
                                 else:
                                     False
                                 if p["pialin_calificador"] == 'GB':
-                                    _logger.info("go de grupo producto interno")
+                                    _logger.info(
+                                        "go de grupo producto interno")
                                 else:
                                     False
                                 if p["pialin_calificador"] == 'AT':
-                                    _logger.info("numero de busqueda para el precio")
+                                    _logger.info(
+                                        "numero de busqueda para el precio")
                                 else:
                                     False
                         vals.update({'pialin_row': pialin})
@@ -966,7 +987,6 @@ class ediversaOrder(models.Model):
                             }]
                             qtylin.append(xline)
 
-
                     vals.update({'qtylin_row': qtylin})
                     # print("#############################p",p)
 
@@ -1034,7 +1054,8 @@ class ediversaOrder(models.Model):
                                 else:
                                     False
                                 if f["prilin_especificador_precio"] == 'CU':
-                                    _logger.info("por unidadd de consumo o de medida")
+                                    _logger.info(
+                                        "por unidadd de consumo o de medida")
                                 else:
                                     False
                                 if f["prilin_especificador_precio"] == 'LBL':
@@ -1076,11 +1097,13 @@ class ediversaOrder(models.Model):
                         else:
                             False
                         if vals["paclin_tipo_embalaje"] == '200':
-                            _logger.info("Palet  ISO 0 ‐ 1/2 EURO Palet ( 80 x 60 cm)")
+                            _logger.info(
+                                "Palet  ISO 0 ‐ 1/2 EURO Palet ( 80 x 60 cm)")
                         else:
                             False
                         if vals["paclin_tipo_embalaje"] == '201':
-                            _logger.info("Palet  ISO 1 ‐ 1/1 EURO Palet ( 80 x 120 cm)")
+                            _logger.info(
+                                "Palet  ISO 1 ‐ 1/1 EURO Palet ( 80 x 120 cm)")
                         else:
                             False
                         if vals["paclin_tipo_embalaje"] == '202':
@@ -1177,10 +1200,10 @@ class ediversaOrder(models.Model):
                         else:
                             False
                         if vals["taxlin_tipo_impuesto"] == 'RET':
-                            _logger.info("Retención por servicios profesionales ")
+                            _logger.info(
+                                "Retención por servicios profesionales ")
                         else:
                             False
-
 
                     if item[0] == 'ALCLIN':
                         if not len(item) == 2:
@@ -1209,7 +1232,8 @@ class ediversaOrder(models.Model):
                                 else:
                                     False
                                 if f["alclin_tipo_descuento"] == 'EAB':
-                                    _logger.info("De escuentos por pronto pa ago ")
+                                    _logger.info(
+                                        "De escuentos por pronto pa ago ")
                                 else:
                                     False
                                 if f["alclin_tipo_descuento"] == 'TD':
@@ -1233,15 +1257,18 @@ class ediversaOrder(models.Model):
                                 else:
                                     False
                                 if f["alclin_tipo_descuento"] == 'CW':
-                                    _logger.info("Descuento por contenedor o envase retornado ")
+                                    _logger.info(
+                                        "Descuento por contenedor o envase retornado ")
                                 else:
                                     False
                                 if f["alclin_tipo_descuento"] == 'RAD':
-                                    _logger.info("Cargo por contenedor o envase retornado")
+                                    _logger.info(
+                                        "Cargo por contenedor o envase retornado")
                                 else:
                                     False
                                 if f["alclin_tipo_descuento"] == 'ABH':
-                                    _logger.info("Ra appel (descuento por volumen)")
+                                    _logger.info(
+                                        "Ra appel (descuento por volumen)")
                                 else:
                                     False
                                 if f["alclin_tipo_descuento"] == 'ACQ':
@@ -1304,9 +1331,6 @@ class ediversaOrder(models.Model):
         line_tax = []
         vals = self.confirm()
 
-
-
-
         if vals.has_key('nadiv_row'):
             for nadiv in vals['nadiv_row']:
                 # print("#################nadsu",nadsu)
@@ -1314,16 +1338,16 @@ class ediversaOrder(models.Model):
                     if nadi.has_key('nadiv_punto_oper_fac'):
                         # print("##################################nad", nad)
                         factu_recordset = self.env['res.partner'].search([
-                            ('codigo_provedor', '=', str(nadi['nadiv_punto_oper_fac'])),
-                             ('type', '=', 'invoice')
-                             ])
+                            ('codigo_provedor', '=', str(
+                                nadi['nadiv_punto_oper_fac'])),
+                            ('type', '=', 'invoice')
+                        ])
                         # print("#######################################partner_recordset",partner_recordset)
-                        #if not factu_recordset:
-                           #post_vars = {'subject': 'Mensaje', 'body': _('The code not exists %r' % str(nad['nadiv_punto_oper_fac'])), }  # noqa
-                           # self.message_post(type="notification", subtype="mt_comment", **post_vars)  # noqa
-                        #for record in factu_recordset:
-                            #print("#######################################record",record)
-
+                        # if not factu_recordset:
+                        #post_vars = {'subject': 'Mensaje', 'body': _('The code not exists %r' % str(nad['nadiv_punto_oper_fac'])), }  # noqa
+                        # self.message_post(type="notification", subtype="mt_comment", **post_vars)  # noqa
+                        # for record in factu_recordset:
+                        # print("#######################################record",record)
 
         if vals.has_key('naddp_row'):
             for nadd in vals['naddp_row']:
@@ -1332,18 +1356,17 @@ class ediversaOrder(models.Model):
                     if nad.has_key('naddp_punto_entrega'):
                         # print("##################################nad", nad)
                         dir_recordset = self.env['res.partner'].search([
-                            ('codigo_provedor', '=', str(nad['naddp_punto_entrega'])),
-                             ('type', '=', 'delivery')
-                             ])
+                            ('codigo_provedor', '=', str(
+                                nad['naddp_punto_entrega'])),
+                            ('type', '=', 'delivery')
+                        ])
                         # print("#######################################partner_recordset",partner_recordset)
                         if not factu_recordset:
                             post_vars = {'subject': 'Mensaje', 'body': _('The code not exists %r' % str(nad['naddp_punto_entrega'])), }  # noqa
                             self.message_post(type="notification", subtype="mt_comment", **post_vars)  # noqa
                         for record in dir_recordset:
-                            print("#######################################record",record)
-
-
-
+                            print(
+                                "#######################################record", record)
 
         if vals.has_key('nadms_row'):
             for nadsu in vals['nadms_row']:
@@ -1352,15 +1375,17 @@ class ediversaOrder(models.Model):
                     if nad.has_key('nadms_punto_oper_emisor_men'):
                         # print("##################################nad", nad)
                         partner_recordset = self.env['res.partner'].search([
-                            ('codigo_provedor', '=', str(nad['nadms_punto_oper_emisor_men'])),
+                            ('codigo_provedor', '=', str(
+                                nad['nadms_punto_oper_emisor_men'])),
                             ('type', '=', 'contact')
-                            ])
+                        ])
                         # print("#######################################partner_recordset",partner_recordset)
                         if not partner_recordset:
                             post_vars = {'subject': 'Mensaje', 'body': _('The code not exists %r' % str(nad['nadms_punto_oper_emisor_men'])), }  # noqa
                             self.message_post(type="notification", subtype="mt_comment", **post_vars)  # noqa
                         for record in partner_recordset:
-                            print("#######################################record",record)
+                            print(
+                                "#######################################record", record)
 
         qty_list = []
         product_uom_qty = 0.00
@@ -1374,17 +1399,22 @@ class ediversaOrder(models.Model):
                             for qty_l in qty_row:
                                 print "========>qty_l", qty_l
                                 if qty_l.has_key('qtylin_cantidad_expresada') and l['lin_cod_normalizado'] == qty_l['qtylin_product']:
-                                    product_uom_qty = float(qty_l['qtylin_cantidad_expresada'])
-                                    qty_list.append([l['lin_cod_normalizado'], product_uom_qty])
-                        print("#######################################product_uom_qty", product_uom_qty)
+                                    product_uom_qty = float(
+                                        qty_l['qtylin_cantidad_expresada'])
+                                    qty_list.append(
+                                        [l['lin_cod_normalizado'], product_uom_qty])
+                        print(
+                            "#######################################product_uom_qty", product_uom_qty)
                         if not product_recordset:
                             post_vars = {'subject': 'Mensaje', 'body': _('The code not exists %r' % str(l['lin_cod_normalizado'])), }  # noqa
                             self.message_post(type="notification", subtype="mt_comment", **post_vars)  # noqa
-                            print("#######################################post_var", post_vars)
+                            print(
+                                "#######################################post_var", post_vars)
                         for record in product_recordset:
                             # print("#######################################product_recordset",product_recordset)
                             for qty in qty_list:
-                                discount = self.env['sale.order.line'].getDiscount(partner_recordset.id, product_recordset.id)
+                                discount = self.env['sale.order.line'].getDiscount(
+                                    partner_recordset.id, product_recordset.id)
                                 if qty[0] == record.barcode:
                                     product_qty = qty[1]
                                     xline = (0, 0, {
@@ -1394,18 +1424,19 @@ class ediversaOrder(models.Model):
                                         # 'tax_id': [(4, tax_recordset.id)],
                                         'name': '{}'.format(product_recordset.name),  # noqa
                                         'price_unit': product_recordset.lst_price})
-                                    print("#####################################xline", xline)
+                                    print(
+                                        "#####################################xline", xline)
                                     line_list.append(xline)
                             # print("######################################line_list",line_list)
                         if not partner_recordset:
                             print "partner_recordset", partner_recordset
                             raise Warning(_('The partner can not be found!'))
                         order = {
-                                'partner_id': partner_recordset.id,
-                                #'partner_invoice_id' : factu_recordset.id,
-                                'partner_shipping.id' : dir_recordset.id,
-                                'order_line': [line for line in line_list],
-                                 }
+                            'partner_id': partner_recordset.id,
+                            # 'partner_invoice_id' : factu_recordset.id,
+                            'partner_shipping.id': dir_recordset.id,
+                            'order_line': [line for line in line_list],
+                        }
                         # print("####################################order", order)
                     # else:
                     #     post_vars = {'subject': 'Mensaje', 'body': _('The code not exists %r' % str(l['lin_cod_normalizado'])), }  # noqa
