@@ -140,6 +140,43 @@ class ediversaFTP(models.Model):
             'context': context,
         }
 
+    #sube una factura al servidor ftp
+    @api.multi
+    def subir_archivo(self,doc,name_file,namef,nom):
+        conexion = self.test()
+        if conexion:
+            documento = doc
+            documento = open(name_file,"rb")
+            vals= documento.read()
+            fichero = open(namef,"w")
+            fichero.writelines(vals)
+            fichero.close()
+            fichero = open(namef,"rb")
+            conexion.storbinary('STOR %s' % namef, fichero)
+            fichero.close()
+            final = nom.replace('/','-')
+            final =final+".txt"
+            print namef
+            print final
+            conexion.retrlines("LIST")
+            conexion.rename(namef,final)
+
+            view = self.env.ref('ftp_ediversa.ediversa_message_wizard')
+            context =dict(self._context)
+            context['message'] = "El documento "+ str(name_file) + "esta almacenado en el servidor FTP"
+        conexion.close()
+        return {
+            'name': 'Successfull',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'sh.message.wizard',
+            'views': [(view.id,'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'context': context,
+        }
+
     #Condicion que solo permite tener un solo registro dentro de FTP
     @api.constrains('name_ftp')
     def _check_id(self):
