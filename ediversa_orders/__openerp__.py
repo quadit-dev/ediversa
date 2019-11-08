@@ -9,7 +9,8 @@
         'purchase',
         'account',
 	    'tqn_partnerdiscount',
-	    'shipping_eci_corte_ingles'
+	    'shipping_eci_corte_ingles',
+        'ftp_ediversa'
     ],
     'author': 'Quadit, S.A. de C.V.',
     'description': 'eDiversa',
