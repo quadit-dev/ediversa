@@ -48,6 +48,7 @@ class ediversaFTP(models.Model):
         try:
             conexion = FTP(server)
             conexion.login(user,passw)
+            conexion.cwd(self.carpeta)
             print "[+] Conexion establecida correctamente"
         except Exception,e:
             raise Warning('[-] No se pudo establecerla conexion al servidor' + str(e))
@@ -61,7 +62,6 @@ class ediversaFTP(models.Model):
         documentos = ''
         sl = '\n'
         conexion = self.test()
-        conexion.cwd(self.carpeta)
         if conexion:
             data=[]
             res={}
@@ -84,7 +84,6 @@ class ediversaFTP(models.Model):
     def cambiar_nombre(self):
         conexion = self.test()
         doc = self.archivos()
-        conexion.cwd(self.carpeta)
         doc = open('archivos.txt','r')
         st =""
         ban = False
@@ -92,14 +91,7 @@ class ediversaFTP(models.Model):
                 if linea.endswith('pla\n'):
                     sts = linea.replace('.pla\n','.txt')
                     conexion.rename(linea,sts)
-                    conexion.dir()
-                    file = open(sts, 'wb')
-                    conexion.retrbinary('RETR %s' % sts, file.write)
-                    file.close()
-                    file = open(sts, 'r')
-                    print(file.read())
                     ban = True
-                print (linea)
         return ban
 
 
@@ -108,7 +100,6 @@ class ediversaFTP(models.Model):
     def mover_de_carpeta(self):
         conexion = self.test()
         doc = self.archivos()
-        conexion.cwd(self.carpeta)
         conexion.dir()
         st=""
         if conexion:
