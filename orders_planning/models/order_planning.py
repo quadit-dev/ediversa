@@ -5,7 +5,7 @@
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
 
 from openerp import _, api, fields, models, exceptions
-
+from datetime import datetime
 
 class AccountInvoice(models.Model):
     _name = 'ediversa.order'
@@ -27,34 +27,51 @@ class AccountInvoice(models.Model):
         document = ftp_ids.archivos()
         doc = open('archivos.txt', 'r')
         st = ""
-        ban = False
-        # en este for se estan obteniendo todos los archivos en la carpeta Orders
-        # en el servidor FTP y este manera va ejecutar el codigo de ediversa.order
-        # para asi crear una orden de compra una a una
-        # al final del for se moveran todos los documentos a la caperta de Records
 
+        contador = 0
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y")
         for linea in doc.readlines():
-            print linea
             st = linea
             file = open(st, 'wb')
             conn.retrbinary('RETR %s' % st, file.write)
             file.close()
             file = open(st, 'r')
             vals = file.read()
+            file.close()
+            codigo = self.codigo(file,st)
+            res_obj = self.env['res.partner']
+            res_id = res_obj.search([('codigo_provedor','=',codigo)])
+            name_order = "Order_" + date_time +"_"+ str(contador)
             ediversa_obj = self.env['ediversa.order']
             order = ediversa_obj.create({
-                'subject': 'Test',
-                'email': 'angel.alvarez@quadit.mx',
+                'subject': name_order,
+                'email': res_id.email,
                 'attach': vals,
                 })
-            print order
-            attach_obj = self.env['it.attachment']
+            attach_obj = self.env['ir.attachment']
             attach_obj.create({
-                'datas': vals,
-                'name': 'Test mimetype txt',
+                'datas': vals.encode('base64'),
+                'name': linea,
                 'datas_fname': 'file.txt',
                 'mimetype': 'text/plain',
                 'res_model': 'ediversa.order',
                 'res_id': order.id,
-            })
-            print attach_obj
+             })
+            contador = contador + 1
+
+        conn.close()
+        conn_mov = ftp_ids.mover_de_carpeta()
+        print "-----------------*Termina Metodo*------------------"
+
+    @api.multi
+    def codigo(self, doc,st):
+        codigo = ""
+        documento = doc
+        file = open(st, 'r')
+        for linea in file.readlines():
+            ff= linea.replace("|"," ")
+            fff= ff.split(" ")[0]
+            if fff == "NADMS":
+                codigo = linea[6:19]
+        return codigo
