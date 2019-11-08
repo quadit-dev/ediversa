@@ -521,6 +521,10 @@ class export_factura_txt(models.Model):
                         'download_file': True})
             print "f.read()", r.read()
         r.close()
+        m = '/tmp/'+file_name
+        ftp_obj = self.env['ediversa.ftp']
+        ftp_ids = ftp_obj.search([])
+        conn = ftp_ids.subir_archivo(f,m,datas_fname,self.inv_numdoc)
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'export.factura.txt',
