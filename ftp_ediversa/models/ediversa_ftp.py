@@ -100,7 +100,6 @@ class ediversaFTP(models.Model):
     def mover_de_carpeta(self):
         conexion = self.test()
         doc = self.archivos()
-        conexion.dir()
         st=""
         if conexion:
             doc = open('archivos.txt','r')
@@ -116,8 +115,8 @@ class ediversaFTP(models.Model):
                 conexion.retrlines("LIST")
                 conexion.cwd('/')
                 conexion.cwd(self.carpeta)
+                conexion.delete(linea)
 
-        conexion.close()
         return conexion
 
     #Devuelve un mensaje si la conexion a sido exitosa
