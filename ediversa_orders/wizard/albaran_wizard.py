@@ -443,7 +443,7 @@ class export_albaran_txt(models.Model):
         m = '/tmp/'+file_name
         ftp_obj = self.env['ediversa.ftp']
         ftp_ids = ftp_obj.search([])
-        conn = ftp_ids.subir_archivo(f,m,datas_fname,picking.name)
+        conn = ftp_ids.subir_archivo(f,m,datas_fname,picking.name,"ALB")
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'export.albaran.txt',

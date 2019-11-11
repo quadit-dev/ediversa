@@ -33,7 +33,9 @@ class ediversaFTP(models.Model):
 
     name_ftp = fields.Char('Nombre del FTP',required=True)
     ruta_ftp = fields.Char('Ruta del FTP',required=True)
-    carpeta = fields.Char('Carpeta FTP', required=True)
+    carpeta_orders = fields.Char('Carpeta FTP Orders', required=True)
+    carpeta_invoice = fields.Char('Carpeta FTP Invoice', required=True)
+    carpeta_albaran = fields.Char('Carpeta FTP Albaran', required=True)
     usuario_ftp = fields.Char('Usuario FTP', required=True)
     contrasenia_ftp = fields.Char('Contraseña FTP',required=True)
 
@@ -48,7 +50,6 @@ class ediversaFTP(models.Model):
         try:
             conexion = FTP(server)
             conexion.login(user,passw)
-            conexion.cwd(self.carpeta)
             print "[+] Conexion establecida correctamente"
         except Exception,e:
             raise Warning('[-] No se pudo establecerla conexion al servidor' + str(e))
@@ -62,6 +63,7 @@ class ediversaFTP(models.Model):
         documentos = ''
         sl = '\n'
         conexion = self.test()
+        conexion.cwd(self.carpeta_orders)
         if conexion:
             data=[]
             res={}
@@ -83,6 +85,7 @@ class ediversaFTP(models.Model):
     @api.multi
     def cambiar_nombre(self):
         conexion = self.test()
+        conexion.cwd(self.carpeta_orders)
         doc = self.archivos()
         doc = open('archivos.txt','r')
         st =""
@@ -101,6 +104,7 @@ class ediversaFTP(models.Model):
         conexion = self.test()
         doc = self.archivos()
         st=""
+        conexion.cwd(self.carpeta_orders)
         if conexion:
             doc = open('archivos.txt','r')
             for linea in doc.readlines():
@@ -114,7 +118,7 @@ class ediversaFTP(models.Model):
                 conexion.storbinary("STOR "+st, file)
                 conexion.retrlines("LIST")
                 conexion.cwd('/')
-                conexion.cwd(self.carpeta)
+                conexion.cwd(self.carpeta_orders)
                 conexion.delete(linea)
 
         return conexion
@@ -142,9 +146,14 @@ class ediversaFTP(models.Model):
 
     #sube una factura al servidor ftp
     @api.multi
-    def subir_archivo(self,doc,name_file,namef,nom):
+    def subir_archivo(self,doc,name_file,namef,nom,carp):
         conexion = self.test()
         if conexion:
+            if carp == "INV":
+                conexion.cwd(self.carpeta_invoice)
+            else:
+                conexion.cwd(self.carpeta_albaran)
+
             documento = doc
             documento = open(name_file,"rb")
             vals= documento.read()

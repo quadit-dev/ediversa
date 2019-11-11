@@ -18,7 +18,7 @@ class AccountInvoice(models.Model):
         ftp_ids = ftp_obj.search([])
         conn = ftp_ids.test()
         change_name = ftp_ids.cambiar_nombre()
-
+        conn.cwd(ftp_ids.carpeta_orders)
         if change_name:
             print "Cambiaron los nombres"
         else:

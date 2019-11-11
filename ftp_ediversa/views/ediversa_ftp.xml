@@ -46,7 +46,9 @@
                             <group colspan="4">
                                 <field name="name_ftp" />
                                 <field name="ruta_ftp" />
-                                <field name="carpeta" />
+                                <field name="carpeta_orders" />
+                                <field name="carpeta_invoice" />
+                                <field name="carpeta_albaran" />
                                 <field name="usuario_ftp" />
                                 <field name="contrasenia_ftp" />
                             </group>
