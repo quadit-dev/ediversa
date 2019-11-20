@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_export_albaran_txt,export.export.albaran.txt,model_export_albaran_txt,ediversa_orders.group_manager_ediversa_orders,1,1,1,0
+access_ediversa_order,export.ediversa.order,model_ediversa_order,ediversa_orders.group_manager_ediversa_orders,1,1,1,0

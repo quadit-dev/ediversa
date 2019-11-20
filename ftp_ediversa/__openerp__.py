@@ -14,6 +14,8 @@
     'description': 'eDiversa FTP',
     'website': 'https://www.quadit.mx',
     'data': [
+    'security/ftp_ediversa_security.xml',
+    'security/ir.model.access.csv',
     'views/ediversa_ftp.xml'
     ],
     'demo': [],

@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sh_message_wizard,export.sh.message.wizard,model_sh_message_wizard,ftp_ediversa.group_manager_ediversa_ftp,1,1,1,0
+access_ediversa_ftp,export.ediversa.ftp,model_ediversa_ftp,ftp_ediversa.group_manager_ediversa_ftp,1,1,1,0

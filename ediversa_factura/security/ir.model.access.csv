@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_export_factura_txt,export.factura.txt,model_export_factura_txt,ediversa_factura.group_manager_ediversa,1,1,1,0
