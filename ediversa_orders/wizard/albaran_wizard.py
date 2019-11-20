@@ -140,6 +140,10 @@ class export_albaran_txt(models.Model):
                 print (move)
                 print("estoy aqui")
                 print(picking.partner_id)
+            # checa el 'alcance/scope' te da error porque  el res está afuera y la asignación va dentro de un for
+            # el res est al nivel del for
+            code_ddp = ''
+            code_dby = ''
             for child in picking.partner_id:
                 print("<----------------->")
                 if child.code_naddp:

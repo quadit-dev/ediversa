@@ -8,8 +8,9 @@
         'sale',
         'purchase',
         'account',
-	    'tqn_partnerdiscount',
-	    'shipping_eci_corte_ingles',
+        'tqn_partnerdiscount',
+        'shipping_eci_corte_ingles',
+        'delivery',
         'ftp_ediversa'
     ],
     'author': 'Quadit, S.A. de C.V.',
@@ -19,7 +20,7 @@
         'security/orders_ediversa_security.xml',
         'security/ir.model.access.csv',
         'views/ediversa_sale_order.xml',
-	'wizard/albaran_wizard.xml'
+    'wizard/albaran_wizard.xml'
     ],
     'demo': [],
     'installable': True
