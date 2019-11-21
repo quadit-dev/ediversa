@@ -36,76 +36,7 @@ class StockPackOperation(models.Model):
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
-    def do_new_transfer(self, cr, uid, ids, context=None):
-        pack_op_obj = self.pool['stock.pack.operation']
-        data_obj = self.pool['ir.model.data']
-        validate = True
-        for pick in self.browse(cr, uid, ids, context=context):
-            for pack in pick.pack_operation_product_ids:
-                if not pack.id_bultos:
-                    validate = False
-            if not validate:
-                raise UserError(_('Agregar numero de bultos en cada producto'))
-            else:
-                to_delete = []
-                if not pick.move_lines and not pick.pack_operation_ids:
-                    raise UserError(_('Please create some Initial Demand or Mark as Todo and create some Operations. '))
-                # In draft or with no pack operations edited yet, ask if we can just do everything
-                if pick.state == 'draft' or all([x.qty_done == 0.0 for x in pick.pack_operation_ids]):  # noqa
-                    # If no lots when needed, raise error
-                    picking_type = pick.picking_type_id
-                    if (picking_type.use_create_lots or picking_type.use_existing_lots):  # noqa
-                        for pack in pick.pack_operation_ids:
-                            if pack.product_id and pack.product_id.tracking != 'none':  # noqa
-                                raise UserError(_('Some products require lots, so you need to specify those first!'))  # noqa
-                    view = data_obj.xmlid_to_res_id(cr, uid,
-                        'stock.view_immediate_transfer')
-                    wiz_id = self.pool['stock.immediate.transfer'].create(cr,
-                        uid, {'pick_id': pick.id}, context=context)
-                    return {
-                         'name': _('Immediate Transfer?'),
-                         'type': 'ir.actions.act_window',
-                         'view_type': 'form',
-                         'view_mode': 'form',
-                         'res_model': 'stock.immediate.transfer',
-                         'views': [(view, 'form')],
-                         'view_id': view,
-                         'target': 'new',
-                         'res_id': wiz_id,
-                         'context': context,
-                     }
 
-                # Check backorder should check for other barcodes
-                if self.check_backorder(cr, uid, pick, context=context):
-                    view = data_obj.xmlid_to_res_id(cr, uid,
-                        'stock.view_backorder_confirmation')
-                    wiz_id = self.pool['stock.backorder.confirmation'].create(
-                        cr, uid, {'pick_id': pick.id}, context=context)
-                    return {
-                             'name': _('Create Backorder?'),
-                             'type': 'ir.actions.act_window',
-                             'view_type': 'form',
-                             'view_mode': 'form',
-                             'res_model': 'stock.backorder.confirmation',
-                             'views': [(view, 'form')],
-                             'view_id': view,
-                             'target': 'new',
-                             'res_id': wiz_id,
-                             'context': context,
-                         }
-                for operation in pick.pack_operation_ids:
-                    if operation.qty_done < 0:
-                        raise UserError(_('No negative quantities allowed'))
-                    if operation.qty_done > 0:
-                        pack_op_obj.write(cr, uid, operation.id, {
-                            'product_qty': operation.qty_done},
-                            context=context)
-                    else:
-                        to_delete.append(operation.id)
-                if to_delete:
-                    pack_op_obj.unlink(cr, uid, to_delete, context=context)
-                self.do_transfer(cr, uid, ids, context=context)
-        return
 
 
 
@@ -129,19 +60,27 @@ class export_albaran_txt(models.Model):
     @api.model
     def default_get(self,values):
         print("########## VALUES ", values)
+        pack_op_obj = self.pool['stock.pack.operation']
+        data_obj = self.pool['ir.model.data']
+        validate = True
+
         res = super(export_albaran_txt,self).default_get(values)
         active_id = self._context.get('active_ids')
         picking_id = self.env['stock.picking'].browse(active_id)
         print "######### res >>>>>>>> ", res
         cont_cntres = 0
         for picking in picking_id:
+            validate = True
             for move in picking.pack_operation_product_ids:
                 cont_cntres = cont_cntres+1
                 print (move)
+                if not move.id_bultos:
+                    validate = False
                 print("estoy aqui")
                 print(picking.partner_id)
-            # checa el 'alcance/scope' te da error porque  el res está afuera y la asignación va dentro de un for
-            # el res est al nivel del for
+            if not validate:
+                raise UserError(_('Agregar numero de bultos en cada producto'))
+
             code_ddp = ''
             code_dby = ''
             for child in picking.partner_id:
@@ -463,5 +402,5 @@ class export_albaran_txt(models.Model):
         if self.type == 'txt':
             active_ids = self._context.get('active_ids', False)
             result = self.export_txt_file(active_ids)
-            print("ahahahahaha____------------->>>>>>>",result)
+            print("ahahahahaha____------------->>>>>>>",active_ids)
             return result
