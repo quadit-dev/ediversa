@@ -51,9 +51,9 @@ class ediversaFTP(models.Model):
             conexion = FTP(server)
             conexion.login(user,passw)
             print "[+] Conexion establecida correctamente"
-        except Exception,e:
-            raise Warning('[-] No se pudo establecerla conexion al servidor' + str(e))
-            print "[-] No se pudo establecerla conexion al servidor" + str(e)
+        except Exception as e:
+            raise Warning('[-] No se pudo establecerla conexion al servidor')
+            print "[-] No se pudo establecerla conexion al servidor %r" %  e
         return conexion
 
     #Este metodo se encarga de devolver los nombres de
