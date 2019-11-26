@@ -467,11 +467,13 @@ class export_factura_txt(models.Model):
             campo_prilin = "%s|%s|%s" % (
                 "PRILIN","AAB",move.price_unit)
             document_txt = document_txt+ sl + campo_prilin
-            print ("----->",move.invoice_line_tax_ids.calificador)
-            campo_taxlin = "%s|%s|%s|%s" % (
-                "TAXLIN",move.invoice_line_tax_ids.calificador,
-                move.invoice_line_tax_ids.amount,move.price_subtotal)
-            document_txt = document_txt+ sl + campo_taxlin
+            print ("----->",move.invoice_line_tax_ids)
+
+            for tax in move.invoice_line_tax_ids:
+                print (tax.calificador)
+                campo_taxlin = "%s|%s|%s|%s" % (
+                "TAXLIN",tax.calificador,tax.amount,move.price_subtotal)
+                document_txt = document_txt+ sl + campo_taxlin
             descuento_p = move.discount/100
             des = move.price_unit * descuento_p
             campo_alclin = "%s|%s|%s|%s||%s|%s" % (
