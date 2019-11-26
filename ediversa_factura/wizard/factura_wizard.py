@@ -468,6 +468,7 @@ class export_factura_txt(models.Model):
                 "PRILIN","AAB",move.price_unit)
             document_txt = document_txt+ sl + campo_prilin
             campo_taxlin = "%s|%s|%s|%s" % (
+                print ("----->",move.invoice_line_tax_ids.calificador)
                 "TAXLIN",move.invoice_line_tax_ids.calificador,
                 move.invoice_line_tax_ids.amount,move.price_subtotal)
             document_txt = document_txt+ sl + campo_taxlin
