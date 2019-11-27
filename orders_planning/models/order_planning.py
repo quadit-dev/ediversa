@@ -6,6 +6,7 @@
 
 from openerp import _, api, fields, models, exceptions
 from datetime import datetime
+from os import remove
 
 class AccountInvoice(models.Model):
     _name = 'ediversa.order'
@@ -25,7 +26,7 @@ class AccountInvoice(models.Model):
             print "No hay cambios realizados"
 
         document = ftp_ids.archivos()
-        doc = open('archivos.txt', 'r')
+        doc = open('/tmp/archivos.txt', 'r')
         st = ""
 
         contador = 0
