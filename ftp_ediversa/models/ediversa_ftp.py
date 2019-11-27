@@ -68,7 +68,7 @@ class ediversaFTP(models.Model):
             data=[]
             res={}
             conexion.dir(data.append)
-            doc = open('/tmp/archivos.txt','w')
+            doc = open(r'C:\tmp\archivos.txt','w')
             for f in data:
                 if f.endswith('txt'):
                     ff= f.split(" ")[-1]
@@ -95,6 +95,7 @@ class ediversaFTP(models.Model):
                     sts = linea.replace('.pla\n','.txt')
                     conexion.rename(linea,sts)
                     ban = True
+        doc.close()
         return ban
 
 
@@ -120,7 +121,7 @@ class ediversaFTP(models.Model):
                 conexion.cwd('/')
                 conexion.cwd(self.carpeta_orders)
                 conexion.delete(linea)
-
+        doc.close()
         return conexion
 
     #Devuelve un mensaje si la conexion a sido exitosa
