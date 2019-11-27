@@ -73,7 +73,7 @@ class AccountInvoice(models.Model):
     def codigo(self, doc, st):
         codigo = ""
         documento = doc
-        file = open(st, 'r')
+        file = open("/tmp/"+st, 'r')
         for linea in file.readlines():
             ff = linea.replace("|", " ")
             fff = ff.split(" ")[0]
