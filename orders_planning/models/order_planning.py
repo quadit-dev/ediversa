@@ -25,7 +25,7 @@ class AccountInvoice(models.Model):
             print "No hay cambios realizados"
 
         document = ftp_ids.archivos()
-        doc = open('archivos.txt', 'w+')
+        doc = open('archivos.txt', 'r')
         st = ""
 
         contador = 0
