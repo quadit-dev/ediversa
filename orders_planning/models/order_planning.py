@@ -26,14 +26,17 @@ class AccountInvoice(models.Model):
             print "No hay cambios realizados"
 
         document = ftp_ids.archivos()
+        document = open('/tmp/archivos.txt', 'r')
         doc = open('/tmp/archivos.txt', 'r')
         st = ""
-
+        print ( "------------->>>>" ,document.readlines())
         contador = 0
         now = datetime.now()
         date_time = now.strftime("%m/%d/%Y")
+        print ("------------------>>aquiiiiiiiii1")
         for linea in doc.readlines():
             st = linea
+            print ("------------------>>aquiiiiiiiii2")
             file = open(st, 'wb')
             conn.retrbinary('RETR %s' % st, file.write)
             file.close()
