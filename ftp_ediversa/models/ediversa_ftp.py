@@ -68,7 +68,7 @@ class ediversaFTP(models.Model):
             data=[]
             res={}
             conexion.dir(data.append)
-            doc = open('archivos.txt','a+')
+            doc = open('/opt/archivos.txt','a+')
             for f in data:
                 if f.endswith('txt'):
                     ff= f.split(" ")[-1]
