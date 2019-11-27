@@ -100,18 +100,20 @@ class ediversaFTP(models.Model):
     def mover_de_carpeta(self):
         conexion = self.test()
         doc = self.archivos()
+        print("aquiiiiiiiiiiiiii3")
         st = ""
         conexion.cwd(self.carpeta_orders)
         if conexion:
-            doc = open('/tmp/archivos.txt', 'w+')
+            doc = open('/tmp/archivos.txt', 'r+')
             for linea in doc.readlines():
                 st = linea
-                file = open(st, 'wb')
+                print("aquiiiiiiiiiiiiii4")
+                file = open("/tmp/"+st, 'wb')
                 conexion.retrbinary('RETR %s' % st, file.write)
                 file.close()
                 conexion.cwd('/')
                 conexion.cwd('Records')
-                file = open(st, "rb")
+                file = open("/tmp/"+st, "rb")
                 conexion.storbinary("STOR "+st, file)
                 conexion.retrlines("LIST")
                 conexion.cwd('/')
