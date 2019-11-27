@@ -38,10 +38,10 @@ class AccountInvoice(models.Model):
         for linea in doc.readlines():
             st = linea
             print("------------------>>aquiiiiiiiii2")
-            file = open(st, 'wb+')
+            file = open("/tmp/"+st, 'wb+')
             conn.retrbinary('RETR %s' % st, file.write)
             file.close()
-            file = open(st, 'r')
+            file = open("/tmp/"+st, 'r')
             vals = file.read()
             file.close()
             codigo = self.codigo(file, st)
