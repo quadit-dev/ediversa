@@ -68,7 +68,7 @@ class ediversaFTP(models.Model):
             data=[]
             res={}
             conexion.dir(data.append)
-            doc = open(r'/tmp/archivos.txt','w')
+            doc = open(r'/tmp/archivos.txt','+r')
             for f in data:
                 if f.endswith('txt'):
                     ff= f.split(" ")[-1]
@@ -87,7 +87,7 @@ class ediversaFTP(models.Model):
         conexion = self.test()
         conexion.cwd(self.carpeta_orders)
         doc = self.archivos()
-        doc = open(r'/tmp/archivos.txt','r')
+        doc = open(r'/tmp/archivos.txt','+r')
         st =""
         ban = False
         for linea in doc.readlines():
