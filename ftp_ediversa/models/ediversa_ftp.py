@@ -78,7 +78,7 @@ class ediversaFTP(models.Model):
                     documentos = documentos + ff + sl
 
             doc.writelines(documentos)
-            doc.close()
+
         conexion.close()
         return doc
 
