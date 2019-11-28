@@ -84,24 +84,23 @@ class export_albaran_txt(models.Model):
             code_ddp = ''
             code_dby = ''
             for child in picking.partner_id:
-                print("<----------------->")
                 if child.code_naddp:
                     code_ddp = child.code_naddp
                 if child.code_nadby:
                     code_dby = child.code_nadby
-            res.update({
-                'bgm_num_doc':picking.name,
-                'naddp_cod_entrega': code_ddp,
-                'nadby_cod_cliente': code_dby,
-                'dtm_entrega':picking.min_date,
-                'rff_referencia':picking.origin,
-                'rff_fecha':picking.sale_id.date_order,
-                'nadms_cod_emisor_mens':picking.company_id.partner_id.codigo_provedor,  # noqa
-                'nadmr_cod_emisor_mens':picking.partner_id.codigo_provedor,
-                'nadsu_cod_prove':picking.company_id.partner_id.codigo_provedor,  # noqa
-                'pac_num_embalajes':picking.number_of_packages,
-                'cntres_lines':cont_cntres
-                })
+                res.update({
+                    'bgm_num_doc':picking.name,
+                    'naddp_cod_entrega': code_ddp,
+                    'nadby_cod_cliente': code_dby,
+                    'dtm_entrega':picking.min_date,
+                    'rff_referencia':picking.origin,
+                    'rff_fecha':picking.sale_id.date_order,
+                    'nadms_cod_emisor_mens':picking.company_id.partner_id.codigo_provedor,  # noqa
+                    'nadmr_cod_emisor_mens':picking.partner_id.codigo_provedor,
+                    'nadsu_cod_prove':picking.company_id.partner_id.codigo_provedor,  # noqa
+                    'pac_num_embalajes':picking.number_of_packages,
+                    'cntres_lines':cont_cntres
+                    })
         return res
 
 
@@ -143,11 +142,11 @@ class export_albaran_txt(models.Model):
         ('1', 'Nivel de envio'),
         ('2', 'segundo nivel'),
         ('3', 'tercer nivel')],
-        'secuencia de empacado', required=True)
+        'secuencia de empacado')
     cps_predecesor = fields.Selection([
         ('2', '1'),
         ('3', '2')],
-        'Predecesor', required=True)
+        'Predecesor')
     pac_num_embalajes = fields.Char('Numero de bultos', readonly=True)
     pac_tipo_unidad = fields.Selection([
         ('CT', 'Caja de cartón'),

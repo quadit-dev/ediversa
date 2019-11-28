@@ -47,7 +47,7 @@
         </field>
     </record>
 
- 
+
 
 
     <!--======FORM VIEW ======-->
@@ -69,7 +69,7 @@
                         <field name="bgm_tip_doc" required="1"/>
                         <field name="bgm_fun_men" required="1"/>
                         <!-- <field name="dtm_entrega" readonly="1"/> -->
-                        <field name = "dtm_creacion" readonly="1"/> 
+                        <field name = "dtm_creacion" readonly="1"/>
                         <field name="ali_info" />
                         <field name="rff_cali" required="1"/>
                         <field name="rff_referencia" readonly="1"/>
