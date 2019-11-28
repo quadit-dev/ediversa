@@ -156,10 +156,10 @@ class ediversaFTP(models.Model):
             documento = doc
             documento = open(name_file, "rb")
             vals = documento.read()
-            fichero = open(namef, "w")
+            fichero = open("/tmp/"+namef, "w")
             fichero.writelines(vals)
             fichero.close()
-            fichero = open(namef, "rb")
+            fichero = open("/tmp/"+namef, "rb")
             conexion.storbinary('STOR %s' % namef, fichero)
             fichero.close()
             final = nom.replace('/', '-')
