@@ -40,11 +40,10 @@ class export_factura_txt(models.Model):
             print("___________------____________",invoice.amount_total)
 
 
-
         res.update({
                 'inv_numdoc':invoice.number,
                 'rff_referencia':invoice.origin,
-                'nadsco':invoice.user_id.codigo_provedor,
+                'nadsco':invoice.company_id.partner_id.codigo_provedor,
                 'nadsco_name':invoice.user_id.name,
                 'nadsco_domi':invoice.user_id.street,
                 'nadsco_pobla':invoice.user_id.city,
@@ -57,7 +56,7 @@ class export_factura_txt(models.Model):
                 'nadbco_prov':invoice.partner_id.state_id.name,
                 'nadbco_cp':invoice.partner_id.zip,
                 'nadbco_nif':invoice.partner_id.vat,
-                'nadsu_cod_prove':invoice.user_id.codigo_provedor,
+                'nadsu_cod_prove':invoice.company_id.partner_id.codigo_provedor,
                 'nadsu_rm':invoice.user_id.registro_mer,
                 'nadby_cod_cliente':invoice.partner_id.codigo_provedor,
                 'nadby_nombre':invoice.partner_id.name,
