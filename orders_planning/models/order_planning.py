@@ -10,7 +10,9 @@ from os import remove
 import base64
 import codecs
 import io
+import logging
 
+_logger = logging.getLogger(__name__)
 
 class AccountInvoice(models.Model):
     _name = 'ediversa.order'
@@ -18,39 +20,33 @@ class AccountInvoice(models.Model):
 
     @api.model
     def generar_orden(self, id=None):
-        print "###  ------------ Crear orden de compra ---------"
+        _logger.info("###  ------------ Crear orden de compra ---------")
         ftp_obj = self.env['ediversa.ftp']
         ftp_ids = ftp_obj.search([])
         conn = ftp_ids.test()
         change_name = ftp_ids.cambiar_nombre()
         conn.cwd(ftp_ids.carpeta_orders)
         if change_name:
-            print "Cambiaron los nombres"
+            _logger.info("Cambiaron los nombres")
         else:
-            print "No hay cambios realizados"
+            _logger.info("No hay cambios realizados")
 
         document = ftp_ids.archivos()
         document = open('/tmp/archivos.txt', 'r')
         doc = open('/tmp/archivos.txt', 'r')
         st = ""
-        print("------------->>>>", document.readlines())
         contador = 0
         now = datetime.now()
         date_time = now.strftime("%m/%d/%Y")
-        print("------------------>>aquiiiiiiiii1")
         for linea in doc.readlines():
             st = linea
-            print("------------------>>aquiiiiiiiii2")
             file = open("/tmp/"+st, 'wb+')
             conn.retrbinary('RETR %s' % st, file.write)
             file.close()
             file = open("/tmp/"+st, 'r+')
             vals = file.read()
-            print("------------------>>######",vals)
             vals_encode = vals.decode('latin-1')
-            print("------------------>>######",vals_encode)
             codigo = self.codigo(file, st)
-            print ("#################",codigo)
             res_obj = self.env['res.partner']
             res_id = res_obj.search([('codigo_provedor', '=', codigo)])
             name_order = "Order_" + date_time + "_" + str(contador)
@@ -74,7 +70,7 @@ class AccountInvoice(models.Model):
 
         conn.close()
         conn_mov = ftp_ids.mover_de_carpeta()
-        print "-----------------*Termina Metodo*------------------"
+        _logger.info("======>-*Termina Metodo*------------------")
 
     @api.multi
     def codigo(self, doc, st):

@@ -12,6 +12,9 @@ import shutil
 import sys
 import errno
 import re
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class sh_message_wizard(models.TransientModel):
@@ -48,10 +51,10 @@ class ediversaFTP(models.Model):
         try:
             conexion = FTP(server)
             conexion.login(user, passw)
-            print "[+] Conexion establecida correctamente"
+            _logger.info("[+] Conexion establecida correctamente")
         except Exception as e:
             raise Warning('[-] No se pudo establecerla conexion al servidor')
-            print "[-] No se pudo establecerla conexion al servidor %r" % e
+            _logger.info("[-] No se pudo establecerla conexion al servidor %r" % e)
         return conexion
 
     # Este metodo se encarga de devolver los nombres de
@@ -84,14 +87,12 @@ class ediversaFTP(models.Model):
     def cambiar_nombre(self):
         conexion = self.test()
         conexion.cwd(self.carpeta_orders)
-        print("aquiiiiiiiiiiiiii 4")
         doc = self.archivos()
         doc = open(r'/tmp/archivos.txt', 'r+')
         st = ""
         ban = False
         datos = doc.readlines()
         for linea in datos:
-            print("aquiiiiiiiiiiiiii", linea)
             if linea.endswith('pla\n'):
                 sts = linea.replace('.pla\n', '.txt')
                 conexion.rename(linea, sts)
@@ -165,8 +166,6 @@ class ediversaFTP(models.Model):
             fichero.close()
             final = nom.replace('/', '-')
             final = final+".txt"
-            print namef
-            print final
             conexion.retrlines("LIST")
             conexion.rename(namef, final)
 
@@ -190,7 +189,6 @@ class ediversaFTP(models.Model):
     # Condicion que solo permite tener un solo registro dentro de FTP
     @api.constrains('name_ftp')
     def _check_id(self):
-        print "==============>dentro del contrains"
         current_id = self.search([('id', '!=', self.id)])
         if current_id:
             raise exceptions.ValidationError("Solo puede haber un registro")
