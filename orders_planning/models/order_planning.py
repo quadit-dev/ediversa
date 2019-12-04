@@ -46,6 +46,8 @@ class AccountInvoice(models.Model):
             file = open("/tmp/"+st, 'r+')
             vals = file.read()
             vals_encode = vals.decode('latin-1')
+            # revisar codificaciones.
+            vals_utf8  = vals_encode.encode('utf-8')
             codigo = self.codigo(file, st)
             res_obj = self.env['res.partner']
             res_id = res_obj.search([('codigo_provedor', '=', codigo)])
@@ -54,11 +56,12 @@ class AccountInvoice(models.Model):
             order = ediversa_obj.create({
                 'subject': name_order,
                 'email': res_id.email,
-                'attach': vals_encode,
+                'attach': vals_utf8,
             })
+
             attach_obj = self.env['ir.attachment']
             attach_obj.create({
-                'datas': vals_encode.encode('base64'),
+                'datas': vals_utf8.encode('base64'),
                 'name': linea,
                 'datas_fname': 'file.txt',
                 'mimetype': 'text/plain',
