@@ -7,6 +7,9 @@
 from openerp import _, api, fields, models, exceptions
 from datetime import datetime
 from os import remove
+import base64
+import codecs
+import io
 
 
 class AccountInvoice(models.Model):
@@ -41,10 +44,13 @@ class AccountInvoice(models.Model):
             file = open("/tmp/"+st, 'wb+')
             conn.retrbinary('RETR %s' % st, file.write)
             file.close()
-            file = open("/tmp/"+st, 'r')
+            file = open("/tmp/"+st, 'r+')
             vals = file.read()
-            file.close()
+            print("------------------>>######",vals)
+            vals_encode = vals.decode('latin-1')
+            print("------------------>>######",vals_encode)
             codigo = self.codigo(file, st)
+            print ("#################",codigo)
             res_obj = self.env['res.partner']
             res_id = res_obj.search([('codigo_provedor', '=', codigo)])
             name_order = "Order_" + date_time + "_" + str(contador)
@@ -52,17 +58,18 @@ class AccountInvoice(models.Model):
             order = ediversa_obj.create({
                 'subject': name_order,
                 'email': res_id.email,
-                'attach': vals,
+                'attach': vals_encode,
             })
             attach_obj = self.env['ir.attachment']
             attach_obj.create({
-                'datas': vals.encode('base64'),
+                'datas': vals_encode.encode('base64'),
                 'name': linea,
                 'datas_fname': 'file.txt',
                 'mimetype': 'text/plain',
                 'res_model': 'ediversa.order',
                 'res_id': order.id,
             })
+            file.close()
             contador = contador + 1
 
         conn.close()

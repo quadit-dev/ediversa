@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+    # -*- coding: utf-8 -*-
 # CONTEXTO, LISTA Y RELACIONALES PARA TOMAR LOS VALORES DE LOS PRODUCTOS
 
 from openerp import _, api, fields, models
@@ -37,7 +37,12 @@ class export_factura_txt(models.Model):
         active_id = self._context.get('active_ids')
         invoice_id = self.env['account.invoice'].browse(active_id)
         for invoice in invoice_id:
-            print("___________------____________",invoice.amount_total)
+            order_id = self.env['sale.order'].search([('name','=',invoice.origin)])
+            res_invoice = self.env['res.partner'].search([('id','=',order_id.partner_invoice_id.id)])
+            res_shipping = self.env['res.partner'].search([('id','=',order_id.partner_shipping_id.id)])
+            print("___________------",order_id.name)
+            print("___________------",res_invoice.codigo_provedor)
+            print("___________------",res_shipping.codigo_provedor)
 
 
         res.update({
@@ -80,6 +85,8 @@ class export_factura_txt(models.Model):
                 'moares_impuestos':invoice.amount_tax,
                 'taxres_neto':invoice.amount_total,
                 'taxres_impuestos':invoice.amount_tax,
+                'nadiv':res_invoice.codigo_provedor,
+                'naddp':res_shipping.codigo_provedor,
 
                 })
 
@@ -165,8 +172,8 @@ class export_factura_txt(models.Model):
     nadbii_pobla = fields.Char('poblacion emisor de factura')
     nadbii_cp = fields.Char('codigo postal emisor de factura')
     nadbii_nif = fields.Char('nif emisor de factura')
-    nadiv = fields.Many2one('res.partner',string = 'Receptor de factura')
-    naddp = fields.Many2one('res.partner',string = 'Receptor de mercancia')
+    nadiv = fields.Char('Receptor de factura')
+    naddp = fields.Char('Receptor de mercancia')
     nadms = fields.Char('Codigo EDI del emisor del mensaje')
     nadpe = fields.Char('receptor del pago')
     nadpe_name = fields.Char('receptor del pago nombre')

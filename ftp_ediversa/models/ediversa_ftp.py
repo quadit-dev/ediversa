@@ -84,11 +84,14 @@ class ediversaFTP(models.Model):
     def cambiar_nombre(self):
         conexion = self.test()
         conexion.cwd(self.carpeta_orders)
+        print("aquiiiiiiiiiiiiii 4")
         doc = self.archivos()
-        doc = open(r'/tmp/archivos.txt', 'w+')
+        doc = open(r'/tmp/archivos.txt', 'r+')
         st = ""
         ban = False
-        for linea in doc.readlines():
+        datos = doc.readlines()
+        for linea in datos:
+            print("aquiiiiiiiiiiiiii", linea)
             if linea.endswith('pla\n'):
                 sts = linea.replace('.pla\n', '.txt')
                 conexion.rename(linea, sts)
@@ -100,14 +103,12 @@ class ediversaFTP(models.Model):
     def mover_de_carpeta(self):
         conexion = self.test()
         doc = self.archivos()
-        print("aquiiiiiiiiiiiiii3")
         st = ""
         conexion.cwd(self.carpeta_orders)
         if conexion:
             doc = open('/tmp/archivos.txt', 'r+')
             for linea in doc.readlines():
                 st = linea
-                print("aquiiiiiiiiiiiiii4")
                 file = open("/tmp/"+st, 'wb')
                 conexion.retrbinary('RETR %s' % st, file.write)
                 file.close()
