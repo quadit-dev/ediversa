@@ -1441,7 +1441,7 @@ class ediversaOrder(models.Model):
                             'partner_shipping.id': dir_recordset.id,
                             'order_line': [line for line in line_list],
                         }
-                        _logger.inf('####################################order %s' % order)
+                        _logger.info('####################################order %s' % order)
                     # else:
                     #     post_vars = {'subject': 'Mensaje', 'body': _('The code not exists %r' % str(l['lin_cod_normalizado'])), }  # noqa
                     #     self.message_post(type="notification", subtype="mt_comment", **post_vars)  # noqa
