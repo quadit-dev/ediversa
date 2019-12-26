@@ -35,6 +35,10 @@ class ediversaOrder(models.Model):
     subject = fields.Char('Subject', size=128)
     email = fields.Char('Email', size=128)
     attach = fields.Text('Attachment')
+    dtm_creacion = fields.Datetime ('Fecha creacion',
+        readonly = False,
+        select = True ,
+        default = lambda self: fields.datetime.now ())
 
     @api.multi
     def confirm(self):
@@ -1419,7 +1423,6 @@ class ediversaOrder(models.Model):
                                     product_qty = qty[1]
                                     xline = (0, 0, {
                                         'product_id': product_recordset.id,
-                                        'product_uom_qty': product_qty,
                                         'discount': discount,
                                         # 'tax_id': [(4, tax_recordset.id)],
                                         'name': '{}'.format(product_recordset.name),  # noqa

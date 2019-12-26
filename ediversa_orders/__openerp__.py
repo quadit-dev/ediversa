@@ -20,7 +20,8 @@
         'security/orders_ediversa_security.xml',
         'security/ir.model.access.csv',
         'views/ediversa_sale_order.xml',
-    'wizard/albaran_wizard.xml'
+        'wizard/albaran_wizard.xml',
+        'views/action_server_view.xml'
     ],
     'demo': [],
     'installable': True

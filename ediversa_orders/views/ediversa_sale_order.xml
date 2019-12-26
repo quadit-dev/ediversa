@@ -89,6 +89,7 @@
             <field name="arch" type="xml">
                 <tree string="Inbox">
                     <field name="subject"/>
+                    <field name="dtm_creacion"/>
                     <field name="email"/>
                     <field name="attach" invisible="1"/>
                 </tree>
