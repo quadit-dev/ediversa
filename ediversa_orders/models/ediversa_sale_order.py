@@ -1423,7 +1423,6 @@ class ediversaOrder(models.Model):
                                     product_qty = qty[1]
                                     xline = (0, 0, {
                                         'product_id': product_recordset.id,
-                                        'product_uom_qty':1.0,
                                         'discount': discount,
                                         # 'tax_id': [(4, tax_recordset.id)],
                                         'name': '{}'.format(product_recordset.name),  # noqa
