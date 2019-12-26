@@ -1423,6 +1423,7 @@ class ediversaOrder(models.Model):
                                     product_qty = qty[1]
                                     xline = (0, 0, {
                                         'product_id': product_recordset.id,
+                                        'product_uom_qty':1.0,
                                         'discount': discount,
                                         # 'tax_id': [(4, tax_recordset.id)],
                                         'name': '{}'.format(product_recordset.name),  # noqa
@@ -1440,7 +1441,7 @@ class ediversaOrder(models.Model):
                             'partner_shipping.id': dir_recordset.id,
                             'order_line': [line for line in line_list],
                         }
-                        # print("####################################order", order)
+                        print("####################################order", order)
                     # else:
                     #     post_vars = {'subject': 'Mensaje', 'body': _('The code not exists %r' % str(l['lin_cod_normalizado'])), }  # noqa
                     #     self.message_post(type="notification", subtype="mt_comment", **post_vars)  # noqa
