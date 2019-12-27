@@ -1425,6 +1425,7 @@ class ediversaOrder(models.Model):
                                         'product_id': product_recordset.id,
                                         'discount': discount,
                                         'product_uom': 1,
+                                        'product_uom_qty': product_qty,
                                         # 'tax_id': [(4, tax_recordset.id)],
                                         'name': '{}'.format(product_recordset.name),  # noqa
                                         'price_unit': product_recordset.lst_price})
