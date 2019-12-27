@@ -5,8 +5,8 @@ from openerp import _, api, fields, models, exceptions
 import tempfile
 from ftplib import FTP
 from StringIO import StringIO
+from datetime import datetime
 import os
-import datetime
 import time
 import shutil
 import sys
@@ -185,6 +185,78 @@ class ediversaFTP(models.Model):
             'target': 'new',
             'context': context,
         }
+
+    @api.model
+    def generar_orden(self, id=None):
+        _logger.info("###  ------------ Crear orden de compra ---------")
+        ftp_obj = self.env['ediversa.ftp']
+        ftp_ids = ftp_obj.search([])
+        conn = ftp_ids.test()
+        change_name = ftp_ids.cambiar_nombre()
+        conn.cwd(ftp_ids.carpeta_orders)
+        if change_name:
+            _logger.info("Cambiaron los nombres")
+        else:
+            _logger.info("No hay cambios realizados")
+
+        document = ftp_ids.archivos()
+        document = open('/tmp/archivos.txt', 'r')
+        doc = open('/tmp/archivos.txt', 'r')
+        st = ""
+        contador = 0
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y")
+        for linea in doc.readlines():
+            st = linea
+            file = open("/tmp/"+st, 'wb+')
+            conn.retrbinary('RETR %s' % st, file.write)
+            file.close()
+            file = open("/tmp/"+st, 'r+')
+            vals = file.read()
+            vals_encode = vals.decode('latin-1')
+            # revisar codificaciones.
+            vals_utf8  = vals_encode.encode('utf-8')
+            codigo = self.codigo(file, st)
+            res_obj = self.env['res.partner']
+            res_id = res_obj.search([('codigo_provedor', '=', codigo)])
+            name_order = "Order_" + date_time + "_" + str(contador)
+            ediversa_obj = self.env['ediversa.order']
+            order = ediversa_obj.create({
+                'subject': name_order,
+                'email': res_id.email,
+                'attach': vals_utf8,
+            })
+
+            attach_obj = self.env['ir.attachment']
+            attach_obj.create({
+                'datas': vals_utf8.encode('base64'),
+                'name': linea,
+                'datas_fname': 'file.txt',
+                'mimetype': 'text/plain',
+                'res_model': 'ediversa.order',
+                'res_id': order.id,
+            })
+            file.close()
+            contador = contador + 1
+
+        conn.close()
+        conn_mov = ftp_ids.mover_de_carpeta()
+        _logger.info("======>-*Termina Metodo*------------------")
+
+    @api.multi
+    def codigo(self, doc, st):
+        codigo = ""
+        documento = doc
+        file = open("/tmp/"+st, 'r')
+        for linea in file.readlines():
+            ff = linea.replace("|", " ")
+            fff = ff.split(" ")[0]
+            if fff == "NADMS":
+                codigo = linea[6:19]
+        return codigo
+
+
+
 
     # Condicion que solo permite tener un solo registro dentro de FTP
     @api.constrains('name_ftp')

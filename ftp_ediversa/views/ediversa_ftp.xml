@@ -38,7 +38,8 @@
                         <header>
                         <button string="Probar Conexion" name="conectar"
                             type="object" />
-
+                        <button string="Cargar documentos" name="generar_orden"
+                            type="object" />
 
                         </header>
                         <sheet>
