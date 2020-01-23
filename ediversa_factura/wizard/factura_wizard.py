@@ -11,6 +11,9 @@ import xlsxwriter
 import time
 
 import tempfile
+import logging
+
+_logger = logging.getLogger(__name__)
 
 # SOLUCIONA CUALQUIER ERROR DE ENCODING (CARACTERES ESPECIALES)
 import sys
@@ -40,9 +43,9 @@ class export_factura_txt(models.Model):
             order_id = self.env['sale.order'].search([('name','=',invoice.origin)])
             res_invoice = self.env['res.partner'].search([('id','=',order_id.partner_invoice_id.id)])
             res_shipping = self.env['res.partner'].search([('id','=',order_id.partner_shipping_id.id)])
-            print("___________------",order_id.name)
-            print("___________------",res_invoice.codigo_provedor)
-            print("___________------",res_shipping.codigo_provedor)
+            # print("___________------",order_id.name)
+            # print("___________------",res_invoice.codigo_provedor)
+            # print("___________------",res_shipping.codigo_provedor)
 
 
         res.update({
@@ -174,6 +177,9 @@ class export_factura_txt(models.Model):
     nadbii_nif = fields.Char('nif emisor de factura')
     nadiv = fields.Char('Receptor de factura')
     naddp = fields.Char('Receptor de mercancia')
+    _logger.info("=================================REVISAR=============================")
+    _logger.info(nadiv)
+    _logger.info(naddp)
     nadms = fields.Char('Codigo EDI del emisor del mensaje')
     nadpe = fields.Char('receptor del pago')
     nadpe_name = fields.Char('receptor del pago nombre')
