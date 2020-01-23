@@ -396,10 +396,12 @@ class export_factura_txt(models.Model):
 
         document_txt = document_txt+ sl + campo_nadii
 
-        campo_nadiv="%s|%s|%s|%s|%s|%s|%s" % (
-                "NADIV",self.nadiv.codigo_provedor, self.nadiv.name,
-                self.nadiv.street,self.nadiv.city,
-                self.nadiv.zip,self.nadiv.vat)
+        nadiv_bus = self.env['res.partner'].search([('codigo_provedor','=',self.nadiv)])
+        for nb in nadiv_bus:
+            campo_nadiv="%s|%s|%s|%s|%s|%s|%s" % (
+                "NADIV",nb.codigo_provedor, nb.name,
+                nb.street,nb.city,
+                nb.zip,nb.vat)
 
         document_txt = document_txt+ sl + campo_nadiv
 
@@ -408,20 +410,24 @@ class export_factura_txt(models.Model):
 
         document_txt = document_txt+ sl + campo_nadms
 
-        campo_nadmr="%s|%s" % (
-                "NADMR",self.nadiv.codigo_provedor)
+        for nb in nadiv_bus:
+            campo_nadmr="%s|%s" % (
+                "NADMR",nb.codigo_provedor)
 
         document_txt = document_txt+ sl + campo_nadmr
 
-        campo_naddp="%s|%s|%s|%s|%s|%s||%s" % (
-                "NADDP",self.naddp.codigo_provedor, self.naddp.name,
-                self.naddp.street,self.naddp.state_id.name, self.naddp.zip,
-                self.naddp.vat)
+        naddp_bus = self.env['res.partner'].search([('codigo_provedor','=',self.naddp)])
+        for ndb in naddp_bus:
+            campo_naddp="%s|%s|%s|%s|%s|%s||%s" % (
+                "NADDP",ndb.codigo_provedor, ndb.name,
+                ndb.street,ndb.state_id.name, ndb.zip,
+                ndb.vat)
 
         document_txt = document_txt+ sl + campo_naddp
 
-        campo_nadpr  ="%s|%s" % (
-                "NADPR",self.nadiv.codigo_provedor)
+        for nb in nadiv_bus:
+            campo_nadpr  ="%s|%s" % (
+                "NADPR",nb.codigo_provedor)
 
         document_txt = document_txt+ sl + campo_nadpr
 

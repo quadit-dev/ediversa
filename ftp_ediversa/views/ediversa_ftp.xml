@@ -51,7 +51,7 @@
                                 <field name="carpeta_invoice" />
                                 <field name="carpeta_albaran" />
                                 <field name="usuario_ftp" />
-                                <field name="contrasenia_ftp" />
+                                <field name="contrasenia_ftp" password="True"/>
                             </group>
 
                         </sheet>

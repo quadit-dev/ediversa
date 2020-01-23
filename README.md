@@ -16,8 +16,10 @@ Credits
 Contributors
 ------------
 
-* Angel Alvarez <angel.alvarez@quadit.mx> (https://www.quadit.mx)
-* Lázaro Rodríguez <lazaro@quadit.mx> (https://www.quadit.mx)
+* QUADIT <info@quadit.mx> (https://www.quadit.mx)
+* Lázaro Rodríguez <lazaro@quadit.mx> (Planner/Auditor)
+* Angel Alvarez <angel.alvarez@quadit.mx> (Developer)
+* Armando Juárez <armando.juarez@quadit.mx> (Developer)
 
 
 [![Quadit](https://pbs.twimg.com/profile_images/942255530021609472/tB1otoX7_400x400.jpg)](https://www.quadit.mx)
