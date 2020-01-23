@@ -43,9 +43,10 @@ class export_factura_txt(models.Model):
             order_id = self.env['sale.order'].search([('name','=',invoice.origin)])
             res_invoice = self.env['res.partner'].search([('id','=',order_id.partner_invoice_id.id)])
             res_shipping = self.env['res.partner'].search([('id','=',order_id.partner_shipping_id.id)])
-            # print("___________------",order_id.name)
-            # print("___________------",res_invoice.codigo_provedor)
-            # print("___________------",res_shipping.codigo_provedor)
+            _logger.info("=================================REVISAR=============================")
+            _logger.info(order_id.name)
+            _logger.info(res_invoice.codigo_provedor)
+            _logger.info(res_shipping.codigo_provedor)
 
 
         res.update({
