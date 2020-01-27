@@ -4,7 +4,6 @@
 from openerp import _, api, fields, models
 from openerp.exceptions import Warning
 import logging
-from pprint import pprint
 _logger = logging.getLogger(__name__)
 
 
@@ -331,7 +330,6 @@ class ediversaOrder(models.Model):
                             qtylin.append(xline)
 
                     vals.update({'qtylin_row': qtylin})
-                    # print("#############################p",p)
 
                     if item[0] == 'DTMLIN':
                         if not len(item) == 1:
@@ -454,7 +452,6 @@ class ediversaOrder(models.Model):
             for nadd in vals['naddp_row']:
                 for nad in nadd:
                     if nad.has_key('naddp_punto_entrega'):
-                        #print("========================================>nad", nad)
                         dir_recordset = self.env['res.partner'].search([
                             ('codigo_provedor', '=', str(
                                 nad['naddp_punto_entrega']))
@@ -512,10 +509,7 @@ class ediversaOrder(models.Model):
                                         'price_unit': product_recordset.lst_price})
                                     line_list.append(xline)
                         if not partner_recordset:
-                            print "partner_recordset", partner_recordset
                             raise Warning(_('The partner can not be found!'))
-                        #print("========================================>nombre",dir_recordset.name)
-                        #print("========================================>id",dir_recordset.id)
                         order = {
                             'partner_id': partner_recordset.id,
                             # 'partner_invoice_id' : factu_recordset.id,
@@ -525,4 +519,3 @@ class ediversaOrder(models.Model):
             sale_obj = self.env['sale.order']
             sale_id = sale_obj.create(order)
             _logger.info('El ID de la nueva orden de venta es %s' % sale_id)
-        pprint(vals)
