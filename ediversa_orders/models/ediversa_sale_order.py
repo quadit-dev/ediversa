@@ -519,7 +519,7 @@ class ediversaOrder(models.Model):
                         order = {
                             'partner_id': partner_recordset.id,
                             # 'partner_invoice_id' : factu_recordset.id,
-                            'partner_shipping.id': dir_recordset.id,
+                            'partner_shipping_id': dir_recordset.id,
                             'order_line': [line for line in line_list],
                         }
             sale_obj = self.env['sale.order']
