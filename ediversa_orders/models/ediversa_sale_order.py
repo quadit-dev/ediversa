@@ -438,6 +438,9 @@ class ediversaOrder(models.Model):
         line_tax = []
         vals = self.confirm()
 
+        ref_cliente = str(vals['ord_num_doc'])
+        sucursal = str(vals['nadby_cod_sucursal'])
+
         if vals.has_key('nadiv_row'):
             for nadiv in vals['nadiv_row']:
                 for nadi in nadiv:
@@ -515,6 +518,8 @@ class ediversaOrder(models.Model):
                             # 'partner_invoice_id' : factu_recordset.id,
                             'partner_shipping_id': dir_recordset.id,
                             'order_line': [line for line in line_list],
+                            'client_order_ref': ref_cliente,
+                            'branch_office':sucursal,
                         }
             sale_obj = self.env['sale.order']
             sale_id = sale_obj.create(order)

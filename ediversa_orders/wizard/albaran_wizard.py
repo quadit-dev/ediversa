@@ -311,6 +311,7 @@ class export_albaran_txt(models.Model):
                 "PCI", self.pci_marcaje, self.pci_calificador)
             contador_cntres = contador_cntres+1
             campo_cps = False
+            #BUSCAR AQUI!!!!!
             if move.id_bultos > contador_bulto:
                 campo_cps = "%s|%s|%s" % (
                     "CPS", str(cont_1), str(cont_2))
