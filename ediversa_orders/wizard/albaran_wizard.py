@@ -24,13 +24,14 @@ sys.setdefaultencoding('utf8')
 
 class StockMove(models.Model):
     _inherit = 'stock.move'
-    id_bultos = fields.Char('', readonly = False)
-
+    id_bultos = fields.Selection([('1','1'),
+                                  ('2','2')], 'Tipo', default="1")
 
 
 class StockPackOperation(models.Model):
     _inherit = 'stock.pack.operation'
-    id_bultos = fields.Char('', readonly = False)
+    id_bultos = fields.Selection([('1','1'),
+                                  ('2','2')], 'Tipo', default="1")
 
 
 class StockPicking(models.Model):
