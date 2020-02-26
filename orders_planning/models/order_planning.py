@@ -20,7 +20,6 @@ class AccountInvoice(models.Model):
 
     @api.model
     def generar_orden(self, id=None):
-        _logger.info("###  ------------ Crear orden de compra ---------")
         ftp_obj = self.env['ediversa.ftp']
         ftp_ids = ftp_obj.search([])
         conn = ftp_ids.test()
@@ -73,7 +72,6 @@ class AccountInvoice(models.Model):
 
         conn.close()
         conn_mov = ftp_ids.mover_de_carpeta()
-        _logger.info("======>-*Termina Metodo*------------------")
 
     @api.multi
     def codigo(self, doc, st):

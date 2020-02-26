@@ -42,14 +42,9 @@ class export_factura_txt(models.Model):
         for invoice in invoice_id:
             order = invoice.origin.split(",")
             size = len(order[0])
-            _logger.info(size)
             order_id = self.env['sale.order'].search([('name','=',invoice.origin[0:size])])
             res_invoice = self.env['res.partner'].search([('id','=',order_id.partner_invoice_id.id)])
             res_shipping = self.env['res.partner'].search([('id','=',order_id.partner_shipping_id.id)])
-            _logger.info(order_id.name)
-            _logger.info(res_invoice.codigo_provedor)
-            _logger.info(res_shipping.codigo_provedor)
-
 
         res.update({
                 'inv_numdoc':invoice.number,
@@ -180,9 +175,6 @@ class export_factura_txt(models.Model):
     nadbii_nif = fields.Char('nif emisor de factura')
     nadiv = fields.Char('Receptor de factura')
     naddp = fields.Char('Receptor de mercancia')
-    _logger.info("=================================REVISAR=============================")
-    _logger.info(nadiv)
-    _logger.info(naddp)
     nadms = fields.Char('Codigo EDI del emisor del mensaje')
     nadpe = fields.Char('receptor del pago')
     nadpe_name = fields.Char('receptor del pago nombre')
@@ -488,10 +480,8 @@ class export_factura_txt(models.Model):
             campo_prilin = "%s|%s|%s" % (
                 "PRILIN","AAB",move.price_unit)
             document_txt = document_txt+ sl + campo_prilin
-            print ("----->",move.invoice_line_tax_ids)
 
             for tax in move.invoice_line_tax_ids:
-                print (tax.calificador)
                 campo_taxlin = "%s|%s|%s|%s" % (
                 "TAXLIN",tax.calificador,tax.amount,move.price_subtotal)
                 document_txt = document_txt+ sl + campo_taxlin
@@ -537,13 +527,11 @@ class export_factura_txt(models.Model):
             f.write(document_txt)
         f.close()
         with open('/tmp/'+file_name, 'r+') as r:
-            print "rrrrrrrrrrr", r
             self.write({
                         'cadena_decoding': document_txt,
                         'datas_fname': datas_fname,
                         'file': base64.b64encode(r.read()),
                         'download_file': True})
-            print "f.read()", r.read()
         r.close()
         m = '/tmp/'+file_name
         ftp_obj = self.env['ediversa.ftp']

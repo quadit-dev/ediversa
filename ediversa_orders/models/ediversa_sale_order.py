@@ -4,8 +4,7 @@
 from openerp import _, api, fields, models
 from openerp.exceptions import Warning
 import logging
-_logger = logging.getLogger(__name__)
-
+_logger = logging.getLogger(__name__)    
 
 class supplier(models.Model):
     _name = 'res.partner'
@@ -23,6 +22,7 @@ class product_exi(models.Model):
     product_exist = fields.Text(string='Default Terms and Conditions',
                                 translate=True)
 
+    cod_edi_cli = fields.Char('Código EDI Cliente')
 
 class ediversaOrder(models.Model):
     _name = 'ediversa.order'
@@ -440,6 +440,8 @@ class ediversaOrder(models.Model):
 
         ref_cliente = str(vals['ord_num_doc'])
         sucursal = str(vals['nadby_cod_sucursal'])
+        cod_cliente = str(vals['nadby_punto_oper_comprador'])
+        _logger.info("========================================>cod_cliente %r " % cod_cliente)
 
         if vals.has_key('nadiv_row'):
             for nadiv in vals['nadiv_row']:
@@ -474,6 +476,7 @@ class ediversaOrder(models.Model):
                                 nad['nadms_punto_oper_emisor_men'])),
                             ('type', '=', 'contact')
                         ])
+                        _logger.info("========================================>partner_recordset %r " % partner_recordset)
                         if not partner_recordset:
                             post_vars = {'subject': 'Mensaje', 'body': _('El codigo de cliente2 no existe %r' % str(nad['nadms_punto_oper_emisor_men'])), }  # noqa
                             self.message_post(type="notification", subtype="mt_comment", **post_vars)
@@ -520,6 +523,7 @@ class ediversaOrder(models.Model):
                             'order_line': [line for line in line_list],
                             'client_order_ref': ref_cliente,
                             'branch_office':sucursal,
+                            'cod_edi_cli':cod_cliente,
                         }
             sale_obj = self.env['sale.order']
             sale_id = sale_obj.create(order)

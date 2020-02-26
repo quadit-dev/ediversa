@@ -9,6 +9,8 @@ from openerp import SUPERUSER_ID
 from openerp.exceptions import UserError
 
 from datetime import datetime
+import logging
+_logger = logging.getLogger(__name__)   
 
 import base64
 # TRABAJAR CON LOS EXCEL
@@ -24,22 +26,21 @@ sys.setdefaultencoding('utf8')
 
 class StockMove(models.Model):
     _inherit = 'stock.move'
+    
     id_bultos = fields.Selection([('1','1'),
                                   ('2','2')], 'Tipo', default="1")
-
 
 class StockPackOperation(models.Model):
     _inherit = 'stock.pack.operation'
+    
     id_bultos = fields.Selection([('1','1'),
                                   ('2','2')], 'Tipo', default="1")
-
 
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
-
-
-
+class product_exi(models.Model):
+    _inherit = ['sale.order']
 
 class res_partner(models.Model):
     _inherit = 'res.partner'
@@ -47,20 +48,12 @@ class res_partner(models.Model):
     code_nadby = fields.Char('Codigo EDI Facturacion')
     code_naddp = fields.Char('Codigo EDI Direccion Entrega')
 
-
 class export_albaran_txt(models.Model):
     _name = 'export.albaran.txt'
     _description = 'Exportar Albaran'
 
-
-
-
-
-
-
     @api.model
     def default_get(self,values):
-        print("########## VALUES ", values)
         pack_op_obj = self.pool['stock.pack.operation']
         data_obj = self.pool['ir.model.data']
         validate = True
@@ -68,27 +61,23 @@ class export_albaran_txt(models.Model):
         res = super(export_albaran_txt,self).default_get(values)
         active_id = self._context.get('active_ids')
         picking_id = self.env['stock.picking'].browse(active_id)
-        print "######### res >>>>>>>> ", res
         cont_cntres = 0
         for picking in picking_id:
             validate = True
             for move in picking.pack_operation_product_ids:
                 cont_cntres = cont_cntres+1
-                print (move)
                 if not move.id_bultos:
                     validate = False
-                print("estoy aqui")
-                print(picking.partner_id)
             if not validate:
                 raise UserError(_('Agregar numero de bultos en cada producto'))
 
-            code_ddp = ''
-            code_dby = ''
+            code_ddp = picking.partner_id.codigo_provedor
+            code_dby = picking.sale_id.cod_edi_cli
             for child in picking.partner_id:
-                if child.code_naddp:
-                    code_ddp = child.code_naddp
-                if child.code_nadby:
-                    code_dby = child.code_nadby
+                # if child.code_naddp:
+                #     code_ddp = child.code_naddp
+                # if child.code_nadby:
+                #     code_dby = picking.sale_id.cod_edi_cli
                 res.update({
                     'bgm_num_doc':picking.name,
                     'naddp_cod_entrega': code_ddp,
@@ -103,8 +92,6 @@ class export_albaran_txt(models.Model):
                     'cntres_lines':cont_cntres
                     })
         return res
-
-
 
     datas_fname = fields.Char('File Name', size=256)
     bgm_num_doc = fields.Char('Numero de aviso de expedicion', size=256)
@@ -205,7 +192,6 @@ class export_albaran_txt(models.Model):
         ('C', 'Descripcion Codificada')],
         'Calificador de descripcion', required=True, default="F")
 
-
     qtylin_cali_cant = fields.Selection([
         ('12', 'Cantidad enviada (no incluye la mercancía sin cargo)'),
         ('21', 'Cantidad solicitada por el comprador (no incluye la mercancía sin cargo)'),  # noqa
@@ -230,7 +216,6 @@ class export_albaran_txt(models.Model):
     @api.multi
     def export_txt_file(self, picking_ids):
         document_txt = ""
-        print "picking_ids", picking_ids
         #split de fecha creacion
         split_creacion = self.dtm_creacion.split('-')
         split_creacion_dia = split_creacion[2].split(' ')
@@ -312,7 +297,7 @@ class export_albaran_txt(models.Model):
                 "PCI", self.pci_marcaje, self.pci_calificador)
             contador_cntres = contador_cntres+1
             campo_cps = False
-            #BUSCAR AQUI!!!!!
+
             if move.id_bultos > contador_bulto:
                 campo_cps = "%s|%s|%s" % (
                     "CPS", str(cont_1), str(cont_2))
@@ -346,7 +331,7 @@ class export_albaran_txt(models.Model):
                 else:
                     body += campo_lin + sl + campo_pialin + sl + \
                         campo_imdlin + sl + campo_qtylin + sl
-        print("############################################body", body)
+        
         campo_cntres = "%s|%s" % (
                     "CNTRES", str(contador_cntres))
 
@@ -363,7 +348,6 @@ class export_albaran_txt(models.Model):
             sl + campo_nadmr + sl + campo_nadsu + sl + campo_nadby + sl + \
             campo_naddp + sl + cabecera  + sl + body + campo_cntres+ sl
 
-        print("#########document_txt", document_txt)
 
         # =>Fin cuerpo
         # time.sleep(10)
@@ -376,13 +360,11 @@ class export_albaran_txt(models.Model):
             f.write(document_txt)
         f.close()
         with open('/tmp/'+file_name, 'r+') as r:
-            print "rrrrrrrrrrr", r
             self.write({
                         'cadena_decoding': document_txt,
                         'datas_fname': datas_fname,
                         'file': base64.b64encode(r.read()),
                         'download_file': True})
-            print "f.read()", r.read()
         r.close()
         m = '/tmp/'+file_name
         ftp_obj = self.env['ediversa.ftp']
@@ -403,5 +385,4 @@ class export_albaran_txt(models.Model):
         if self.type == 'txt':
             active_ids = self._context.get('active_ids', False)
             result = self.export_txt_file(active_ids)
-            print("ahahahahaha____------------->>>>>>>",active_ids)
             return result
