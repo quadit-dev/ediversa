@@ -3,6 +3,7 @@
 
 from openerp import _, api, fields, models, exceptions
 import tempfile
+from openerp.exceptions import UserError, ValidationError, Warning
 from ftplib import FTP
 from StringIO import StringIO
 from datetime import datetime
