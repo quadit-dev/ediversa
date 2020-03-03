@@ -287,7 +287,7 @@ class export_albaran_txt(models.Model):
                 cont_1 = cont_1+1
                 cont_2 = cont_2+1
                 campo_cps = "%s|%s|%s" % (
-                    "CPS", str(cont_1), "2")
+                    "CPS", str(cont_1), "1")
                 campo_pac = "%s|%s|%s" % (
                     "PAC", str(cont_1_pac),  self.pac_tipo_unidad_palet)
                 cabecera += campo_cps +  sl + campo_pac
