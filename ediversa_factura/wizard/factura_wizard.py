@@ -28,7 +28,6 @@ class res_partner(models.Model):
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
-
 class export_factura_txt(models.Model):
     _name = 'export.factura.txt'
     _description = 'Exportar Factura'
@@ -45,7 +44,13 @@ class export_factura_txt(models.Model):
             order_id = self.env['sale.order'].search([('name','=',invoice.origin[0:size])])
             res_invoice = self.env['res.partner'].search([('id','=',order_id.partner_invoice_id.id)])
             res_shipping = self.env['res.partner'].search([('id','=',order_id.partner_shipping_id.id)])
-
+        _logger.info("===============>order_sale %r" % order_id)
+        _logger.info("===============>nadbco %r" % invoice.partner_id.parent_id.codigo_provedor)
+        _logger.info("===============>nadby_cod_cliente %r" % order_id.cod_edi_cli)
+        _logger.info("===============>nadiv %r" % res_invoice.code_nadby)
+        _logger.info("===============>nadms %r" % invoice.partner_id.code_nadby)
+        _logger.info("===============>nadmr %r" % invoice.company_id.partner_id.codigo_provedor)
+        _logger.info("===============>nadpe %r" % invoice.company_id.partner_id.codigo_provedor)
         res.update({
                 'inv_numdoc':invoice.number,
                 'rff_referencia':invoice.origin,
@@ -56,29 +61,30 @@ class export_factura_txt(models.Model):
                 'nadsco_cp':invoice.company_id.partner_id.zip,
                 'nadsco_nif':invoice.company_id.partner_id.vat,
                 'nadsco_rm':invoice.company_id.partner_id.registro_mer,
-                'nadbco':invoice.partner_id.codigo_provedor,
-                'nadbco_name':invoice.partner_id.name,
-                'nadbco_direc':invoice.partner_id.street,
-                'nadbco_prov':invoice.partner_id.state_id.name,
-                'nadbco_cp':invoice.partner_id.zip,
-                'nadbco_nif':invoice.partner_id.vat,
+                'nadbco':invoice.partner_id.parent_id.codigo_provedor,
+                'nadbco_name':invoice.partner_id.parent_id.name,
+                'nadbco_direc':invoice.partner_id.parent_id.street,
+                'nadbco_prov':invoice.partner_id.parent_id.state_id.name,
+                'nadbco_cp':invoice.partner_id.parent_id.zip,
+                'nadbco_nif':invoice.partner_id.parent_id.vat,
                 'nadsu_cod_prove':invoice.company_id.partner_id.codigo_provedor,
                 'nadsu_rm':invoice.company_id.partner_id.registro_mer,
-                'nadby_cod_cliente':invoice.partner_id.codigo_provedor,
-                'nadby_nombre':invoice.partner_id.name,
-                'nadby_domi':invoice.partner_id.street,
-                'nadby_pobla':invoice.partner_id.city,
-                'nadby_cp':invoice.partner_id.zip,
-                'nadby_nif':invoice.partner_id.vat,
+                'nadby_cod_cliente':order_id.cod_edi_cli,
+                'nadby_nombre':invoice.partner_id.parent_id.name,
+                'nadby_domi':invoice.partner_id.parent_id.street,
+                'nadby_pobla':invoice.partner_id.parent_id.city,
+                'nadby_cp':invoice.partner_id.parent_id.zip,
+                'nadby_nif':invoice.partner_id.parent_id.vat,
+                'nadby_sec':invoice.partner_id.parent_id.codigo_provedor,
                 'nadbii':invoice.company_id.partner_id.codigo_provedor,
                 'nadbii_name':invoice.company_id.partner_id.name,
                 'nadbii_domi':invoice.company_id.partner_id.street,
                 'nadbii_pobla':invoice.company_id.partner_id.city,
                 'nadbii_cp':invoice.company_id.partner_id.zip,
                 'nadbii_nif':invoice.company_id.partner_id.vat,
-                'nadms':invoice.partner_id.codigo_provedor,
-                'nadmr':invoice.company_id.partner_id.codigo_provedor,
-                'nadpe':invoice.partner_id.codigo_provedor,
+                'nadms':invoice.company_id.partner_id.codigo_provedor,
+                'nadmr':invoice.partner_id.codigo_provedor,
+                'nadpe':invoice.company_id.partner_id.codigo_provedor,
                 'nadpe_name':invoice.partner_id.name,
                 'moares_neto':invoice.amount_total,
                 'moares_bruto':invoice.amount_untaxed,
@@ -86,7 +92,7 @@ class export_factura_txt(models.Model):
                 'moares_impuestos':invoice.amount_tax,
                 'taxres_neto':invoice.amount_total,
                 'taxres_impuestos':invoice.amount_tax,
-                'nadiv':res_invoice.codigo_provedor,
+                'nadiv':res_invoice.code_nadby,
                 'naddp':res_shipping.codigo_provedor,
 
                 })
@@ -399,6 +405,7 @@ class export_factura_txt(models.Model):
 
         nadiv_bus = self.env['res.partner'].search([('codigo_provedor','=',self.nadiv)])
         for nb in nadiv_bus:
+            _logger.info("===============>nb %r" % nb)
             campo_nadiv="%s|%s|%s|%s|%s|%s|%s" % (
                 "NADIV",nb.codigo_provedor, nb.name,
                 nb.street,nb.city,
