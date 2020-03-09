@@ -83,7 +83,7 @@ class export_albaran_txt(models.Model):
                     'naddp_cod_entrega': code_ddp,
                     'nadby_cod_cliente': code_dby,
                     'dtm_entrega':picking.min_date,
-                    'rff_referencia':picking.origin,
+                    'rff_referencia':picking.order_reference,
                     'rff_fecha':picking.sale_id.date_order,
                     'nadms_cod_emisor_mens':picking.company_id.partner_id.codigo_provedor,  # noqa
                     'nadmr_cod_emisor_mens':picking.partner_id.codigo_provedor,
