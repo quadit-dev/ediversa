@@ -23,6 +23,7 @@ class product_exi(models.Model):
                                 translate=True)
 
     cod_edi_cli = fields.Char('Código EDI Cliente')
+    cod_dep = fields.Char('Código Departamento')
 
 class ediversaOrder(models.Model):
     _name = 'ediversa.order'
@@ -441,7 +442,7 @@ class ediversaOrder(models.Model):
         ref_cliente = str(vals['ord_num_doc'])
         sucursal = str(vals['nadby_cod_sucursal'])
         cod_cliente = str(vals['nadby_punto_oper_comprador'])
-        _logger.info("========================================>cod_cliente %r " % cod_cliente)
+        cod_departamento = str(vals['nadby_departamento'])
 
         if vals.has_key('nadiv_row'):
             for nadiv in vals['nadiv_row']:
@@ -524,6 +525,7 @@ class ediversaOrder(models.Model):
                             'client_order_ref': ref_cliente,
                             'branch_office':sucursal,
                             'cod_edi_cli':cod_cliente,
+                            'cod_dep':cod_departamento,
                         }
             sale_obj = self.env['sale.order']
             sale_id = sale_obj.create(order)
