@@ -79,7 +79,7 @@ class export_albaran_txt(models.Model):
                 # if child.code_nadby:
                 #     code_dby = picking.sale_id.cod_edi_cli
                 res.update({
-                    'bgm_num_doc':picking.name,
+                    'bgm_num_doc':picking.origin,
                     'naddp_cod_entrega': code_ddp,
                     'nadby_cod_cliente': code_dby,
                     'dtm_entrega':picking.min_date,
@@ -239,7 +239,7 @@ class export_albaran_txt(models.Model):
         # =>Cabecera
         for picking in self.env['stock.picking'].browse(picking_ids):
             campo_bgm = "%s|%s|%s|%s" % (
-                "BGM", picking.name, self.bgm_tip_doc, self.bgm_fun_men)
+                "BGM", picking.origin, self.bgm_tip_doc, self.bgm_fun_men)
             campo_dtm = "%s|%s|%s" % (
                 "DTM", date_creacion, date_entrega )
             campo_ali = "%s|%s" % (
