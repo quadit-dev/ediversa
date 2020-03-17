@@ -53,7 +53,8 @@ class export_factura_txt(models.Model):
         _logger.info("===============>nadpe %r" % invoice.company_id.partner_id.codigo_provedor)
         res.update({
                 'inv_numdoc':invoice.number,
-                'rff_referencia':invoice.origin,
+                'rff_albaran':invoice.origin,
+                'rff_pedido':invoice.name,
                 'nadsco':invoice.company_id.partner_id.codigo_provedor,
                 'nadsco_name':invoice.company_id.partner_id.name,
                 'nadsco_domi':invoice.company_id.partner_id.street,
@@ -142,12 +143,13 @@ class export_factura_txt(models.Model):
         ('80E', 'Bonificaciones anuales (Rappel)')],
         'Condiciones especiales', default="1A")
 
-    rff_cali = fields.Selection([
-        ('DQ', 'Numero de albaran en papel'),
-        ('ON', 'Numero de pedido'),
-        ('AAN', 'Numero de planificacion de entregas')],
-        'Referencias', required=True, default="DQ")
-    rff_referencia = fields.Char('Referencia del documento')
+    # rff_cali = fields.Selection([
+    #     ('DQ', 'Numero de albaran en papel'),
+    #     ('ON', 'Numero de pedido'),
+    #     ('AAN', 'Numero de planificacion de entregas')],
+    #     'Referencias', required=True, default="DQ")
+    rff_albaran = fields.Char('Número de albarán')
+    rff_pedido = fields.Char('Número de pedido')
     rff_fecha = fields.Datetime ('Fecha referencia',
         readonly = False, select = True,
         default = lambda self: fields.datetime.now ())
@@ -365,10 +367,17 @@ class export_factura_txt(models.Model):
                 "ALI", self.ali)
             document_txt = document_txt+ sl + campo_ali
 
-        campo_rff = "%s|%s|%s|%s" % (
-                "RFF", self.rff_cali,self.rff_referencia,date_referencia)
+        #Inicio segmento RFF
+        campo_rff_albaran = "%s|%s|%s|%s" % (
+                "RFF", "DQ",self.rff_albaran,date_referencia)
 
-        document_txt = document_txt+ sl + campo_rff
+        document_txt = document_txt+ sl + campo_rff_albaran
+
+        campo_rff_pedido = "%s|%s|%s|%s" % (
+                "RFF", "ON",self.rff_pedido,date_referencia)
+
+        document_txt = document_txt+ sl + campo_rff_pedido
+        #Fin segmento RFF
 
         campo_nadsco ="%s|%s|%s|%s|%s|%s|%s|%s|" % (
                 "NADSCO",self.nadsco,self.nadsco_name,self.nadsco_rm,
