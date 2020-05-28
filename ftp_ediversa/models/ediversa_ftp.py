@@ -115,7 +115,7 @@ class ediversaFTP(models.Model):
                 conexion.retrbinary('RETR %s' % st, file.write)
                 file.close()
                 conexion.cwd('/')
-                conexion.cwd('Pruebas_Records')
+                conexion.cwd('Records')
                 file = open("/tmp/"+st, "rb")
                 conexion.storbinary("STOR "+st, file)
                 conexion.retrlines("LIST")
