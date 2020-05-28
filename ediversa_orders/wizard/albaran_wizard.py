@@ -260,7 +260,7 @@ class export_albaran_txt(models.Model):
             campo_nadms = "%s|%s" % (
                 "NADMS", picking.company_id.partner_id.codigo_provedor)
             campo_nadmr = "%s|%s" % (
-                "NADMR", picking.partner_id.codigo_provedor)
+                "NADMR", picking.partner_id.parent_id.codigo_provedor)
             campo_nadsu = "%s|%s" % (
                 "NADSU", picking.company_id.partner_id.codigo_provedor)
             campo_nadby = "%s|%s||%s" % (
