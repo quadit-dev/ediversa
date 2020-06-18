@@ -44,13 +44,6 @@ class export_factura_txt(models.Model):
             order_id = self.env['sale.order'].search([('name','=',invoice.origin[0:size])])
             res_invoice = self.env['res.partner'].search([('id','=',order_id.partner_invoice_id.id)])
             res_shipping = self.env['res.partner'].search([('id','=',order_id.partner_shipping_id.id)])
-        _logger.info("===============>order_sale %r" % order_id)
-        _logger.info("===============>nadbco %r" % invoice.partner_id.parent_id.codigo_provedor)
-        _logger.info("===============>nadby_cod_cliente %r" % order_id.cod_edi_cli)
-        _logger.info("===============>nadiv %r" % res_invoice.code_nadby)
-        _logger.info("===============>nadms %r" % invoice.partner_id.code_nadby)
-        _logger.info("===============>nadmr %r" % invoice.company_id.partner_id.codigo_provedor)
-        _logger.info("===============>nadpe %r" % invoice.company_id.partner_id.codigo_provedor)
         res.update({
                 'inv_numdoc':invoice.number,
                 'rff_albaran':invoice.origin,
@@ -471,6 +464,7 @@ class export_factura_txt(models.Model):
 
         # => Cuerpo articulos
 
+        total_price_unit = 0
         for move in self.env['account.invoice'].browse(
             picking_ids).invoice_line_ids:
 
@@ -488,24 +482,23 @@ class export_factura_txt(models.Model):
                 self.qtylin_uni)
             document_txt = document_txt+ sl + campo_qtylin
             campo_moalin = "%s|%s" % (
-                "MOALIN",move.price_unit)
+                "MOALIN",move.price_subtotal)
             document_txt = document_txt+ sl + campo_moalin
             campo_prilin = "%s|%s|%s" % (
-                "PRILIN","AAA",((move.price_unit*.16)+move.price_unit)*move.quantity)  # noqa
+                "PRILIN","AAA",move.price_subtotal)  # noqa
             document_txt = document_txt+ sl + campo_prilin
             campo_prilin = "%s|%s|%s" % (
                 "PRILIN","AAB",move.price_unit)
+            total_price_unit = total_price_unit + move.price_unit
             document_txt = document_txt+ sl + campo_prilin
 
             for tax in move.invoice_line_tax_ids:
                 campo_taxlin = "%s|%s|%s|%s" % (
-                "TAXLIN",tax.calificador,tax.amount,move.price_subtotal)
+                "TAXLIN",tax.calificador,tax.amount,(move.price_unit*.04))
                 document_txt = document_txt+ sl + campo_taxlin
-            descuento_p = move.discount/100
-            des = move.price_unit * descuento_p
             campo_alclin = "%s|%s|%s|%s||%s|%s" % (
                 "ALCLIN",self.alclin_cal,self.alclin_sec,self.alclin_tipo,
-                move.discount,des)
+                move.discount,(move.price_unit - move.price_subtotal))
             document_txt = document_txt+ sl + campo_alclin
 
 
@@ -514,8 +507,8 @@ class export_factura_txt(models.Model):
                 "CNTRES", "2")
         document_txt = document_txt+ sl + campo_cntres
         campo_moares = "%s|%s|%s|%s|%s" % (
-                "MOARES", self.moares_neto,self.moares_bruto,self.moares_base,
-                self.moares_impuestos)
+                "MOARES", self.moares_bruto, total_price_unit,
+                self.moares_bruto,self.moares_base)
         document_txt = document_txt+ sl + campo_moares
 
         for tax in self.env['account.invoice'].browse(
@@ -523,7 +516,7 @@ class export_factura_txt(models.Model):
             objtax = self.env['account.tax'].search([('name','=',tax.name)])
             campo_taxres = "%s|%s|%s|%s|%s" % (
                 "TAXRES", objtax.calificador,objtax.amount,
-                self.taxres_neto, self.taxres_impuestos)
+                self.taxres_impuestos, self.moares_bruto)
             document_txt = document_txt+ sl + campo_taxres
 
 
