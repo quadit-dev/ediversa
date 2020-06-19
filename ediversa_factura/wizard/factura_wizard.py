@@ -485,16 +485,16 @@ class export_factura_txt(models.Model):
                 "MOALIN",move.price_subtotal)
             document_txt = document_txt+ sl + campo_moalin
             campo_prilin = "%s|%s|%s" % (
-                "PRILIN","AAA",move.price_subtotal)  # noqa
+                "PRILIN","AAA",move.price_unit)  # noqa
             document_txt = document_txt+ sl + campo_prilin
             campo_prilin = "%s|%s|%s" % (
-                "PRILIN","AAB",move.price_unit)
+                "PRILIN","AAB",move.price_subtotal)
             total_price_unit = total_price_unit + move.price_unit
             document_txt = document_txt+ sl + campo_prilin
 
             for tax in move.invoice_line_tax_ids:
                 campo_taxlin = "%s|%s|%s|%s" % (
-                "TAXLIN",tax.calificador,tax.amount,(move.price_unit*.04))
+                "TAXLIN",tax.calificador,tax.amount,(move.price_subtotal*.04))
                 document_txt = document_txt+ sl + campo_taxlin
             campo_alclin = "%s|%s|%s|%s||%s|%s" % (
                 "ALCLIN",self.alclin_cal,self.alclin_sec,self.alclin_tipo,
