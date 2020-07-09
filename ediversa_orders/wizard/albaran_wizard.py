@@ -263,8 +263,8 @@ class export_albaran_txt(models.Model):
                 "NADMR", picking.partner_id.parent_id.codigo_provedor)
             campo_nadsu = "%s|%s" % (
                 "NADSU", picking.company_id.partner_id.codigo_provedor)
-            campo_nadby = "%s|%s" % (
-                "NADBY", self.nadby_cod_cliente)
+            campo_nadby = "%s|%s||%s" % (
+                "NADBY", self.nadby_cod_cliente, picking.sale_id.cod_dep)
             campo_naddp = "%s|%s" % (
                 "NADDP", self.naddp_cod_entrega)
         # =>Fin Cabecera

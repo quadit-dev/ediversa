@@ -79,6 +79,11 @@
                 name="FTP" action="act_ediversa_ftp"
                 sequence="0" />
 
+            <!-- menuitem id="id_menu_ftp_act"
+                parent="ediversa.id_menu_ediversa_ftp_connection" 
+                name="FTP" action="act_ediversa_ftp"
+                sequence="0" /-->
+
 
     </data>
 </openerp>

@@ -120,7 +120,10 @@
         <menuitem action="action_eDiversa_order_form" id="id_principal_mensages_act" parent="id_buzon_entrada" name="Messages" sequence="1"/>
 
 
-
+        <!--menuitem action="action_eDiversa_order_form" 
+            id="id_principal_mensages_act" 
+            parent="ediversa.id_menu_ediversa_messages" 
+            name="Messages" sequence="1"/-->
 
 
 

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+  
+    <!--PRINCIPAL MENU -->
+    <menuitem id="id_principal_ediversa" name="eDiversa"/>
+
+  	<!--MENUS -->
+    
+    <menuitem id="id_menu_ediversa_messages" 
+      parent="id_principal_ediversa" 
+      name="Mensajes" sequence="0"/>
+
+    <menuitem id="id_menu_ediversa_ftp_connection" 
+      parent="id_principal_ediversa" 
+      name="Conexión FTP" sequence="1"/>
+
+    <menuitem id="id_menu_ediversa_configuration" 
+      parent="id_principal_ediversa" 
+      name="Configuración" sequence="2"/>
+
+  </data>
+</openerp>
