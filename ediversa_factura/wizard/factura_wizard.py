@@ -25,6 +25,9 @@ class res_partner(models.Model):
     _inherit = 'res.partner'
     registro_mer = fields.Char('Registro Mercantil')
 
+class StockPicking(models.Model):
+    _inherit = 'stock.picking'
+
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
@@ -44,9 +47,13 @@ class export_factura_txt(models.Model):
             order_id = self.env['sale.order'].search([('name','=',invoice.origin[0:size])])
             res_invoice = self.env['res.partner'].search([('id','=',order_id.partner_invoice_id.id)])
             res_shipping = self.env['res.partner'].search([('id','=',order_id.partner_shipping_id.id)])
+            _logger.info("===============>order_id.client_order_ref %r" % order_id.client_order_ref)
+            picking = self.env['stock.picking'].search([("order_reference", '=', order_id.client_order_ref)])
+            split_name = picking.name.split('/')
+            split_albaran = split_name[2]
         res.update({
                 'inv_numdoc':invoice.number,
-                'rff_albaran':invoice.origin,
+                'rff_albaran':split_albaran,
                 'rff_pedido':invoice.name,
                 'nadsco':invoice.company_id.partner_id.codigo_provedor,
                 'nadsco_name':invoice.company_id.partner_id.name,
@@ -69,7 +76,7 @@ class export_factura_txt(models.Model):
                 'nadby_pobla':invoice.partner_id.parent_id.city,
                 'nadby_cp':invoice.partner_id.parent_id.zip,
                 'nadby_nif':invoice.partner_id.parent_id.vat,
-                'nadby_sec':invoice.partner_id.parent_id.codigo_provedor,
+                'nadby_sec':order_id.cod_dep,
                 'nadbii':invoice.company_id.partner_id.codigo_provedor,
                 'nadbii_name':invoice.company_id.partner_id.name,
                 'nadbii_domi':invoice.company_id.partner_id.street,
