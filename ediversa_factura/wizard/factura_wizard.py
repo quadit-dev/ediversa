@@ -44,13 +44,10 @@ class export_factura_txt(models.Model):
         for invoice in invoice_id:
             order = invoice.origin.split(",")
             size = len(order[0])
-            _logger.info("===============>order %r" % order)
             order_id = self.env['sale.order'].search([('name','=',invoice.origin[0:size])])
             res_invoice = self.env['res.partner'].search([('id','=',order_id.partner_invoice_id.id)])
             res_shipping = self.env['res.partner'].search([('id','=',order_id.partner_shipping_id.id)])
-            picking = self.env['stock.picking'].search([("group_id", '=', order)])
-            _logger.info("===============>picking %r" % picking)
-            split_name = picking.name.split('/')
+            split_name = invoice.picking_ids.name.split('/')
             split_albaran = split_name[2]
         res.update({
                 'inv_numdoc':invoice.number,
